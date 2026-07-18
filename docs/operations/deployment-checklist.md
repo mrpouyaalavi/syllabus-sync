@@ -25,6 +25,7 @@ Open the Vercel project settings and confirm that every required variable is pre
 | Category      | Variables                                                                                    | Notes                                                                  |
 | :------------ | :------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------- |
 | Database      | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`     | Service role key is server-side only.                                  |
+| Auth Cookies  | `NEXT_PUBLIC_AUTH_COOKIE_DOMAIN`                                                              | Set to `.syllabus-sync.app` in production so the Supabase session cookie is shared across subdomains (e.g. `www.syllabus-sync.app` and `sylla.syllabus-sync.app`). Leave unset in preview/local — see `lib/supabase/cookie-options.ts`. |
 | Rate Limiting | `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`, `KV_REST_API_URL`, `KV_REST_API_TOKEN` | KV variables required by the production env check script.              |
 | Email         | `RESEND_API_KEY`, `VERIFICATION_EMAIL_FROM`, `VERIFICATION_EMAIL_NAME`                       | Sender must be a verified domain in production.                        |
 | Maps          | `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`, `NEXT_PUBLIC_GOOGLE_MAP_ID`, `GOOGLE_ROUTES_API_KEY`      | See the [Google Maps Platform Setup](./google-maps-platform-setup.md). |

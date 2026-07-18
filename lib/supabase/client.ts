@@ -1,4 +1,5 @@
 import { createBrowserClient as createSupabaseBrowserClient } from "@supabase/ssr";
+import { getSharedCookieOptions } from "./cookie-options";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
@@ -142,7 +143,11 @@ export function createBrowserClient() {
     } as unknown as ReturnType<typeof createSupabaseBrowserClient>;
   }
 
-  const client = createSupabaseBrowserClient(supabaseUrl, supabaseAnonKey);
+  const cookieOptions = getSharedCookieOptions();
+
+  const client = createSupabaseBrowserClient(supabaseUrl, supabaseAnonKey, {
+    ...(cookieOptions ? { cookieOptions } : {}),
+  });
 
   // Store as singleton in browser environment
   if (typeof window !== "undefined") {

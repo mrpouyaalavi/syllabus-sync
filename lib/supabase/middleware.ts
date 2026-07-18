@@ -1,6 +1,7 @@
 import { logger } from '@/lib/logger';
 import { createServerClient } from '@supabase/ssr';
 import { NextRequest, NextResponse } from 'next/server';
+import { getSharedCookieOptions } from '@/lib/supabase/cookie-options';
 
 /**
  * Creates a Supabase client for middleware usage
@@ -14,7 +15,10 @@ export function createClient(request: NextRequest) {
     throw new Error('Missing Supabase environment variables');
   }
 
+  const sharedCookieOptions = getSharedCookieOptions();
+
   return createServerClient(supabaseUrl, supabaseAnonKey, {
+    ...(sharedCookieOptions ? { cookieOptions: sharedCookieOptions } : {}),
     cookies: {
       getAll() {
         return request.cookies.getAll();

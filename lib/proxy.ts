@@ -4,6 +4,7 @@ import { generateNonce, buildNonceCSP } from '@/lib/security/csp';
 import { setCSRFCookie, shouldSkipCSRF, validateCSRF } from '@/lib/security/csrf';
 import { logger } from '@/lib/logger';
 import { fetchWithTimeout } from '@/lib/supabase/fetch';
+import { getSharedCookieOptions, withSharedCookieDomain } from '@/lib/supabase/cookie-options';
 
 let lastTransientProxyAuthLogAt = 0;
 const TRANSIENT_PROXY_LOG_INTERVAL_MS = 60_000;
@@ -178,7 +179,10 @@ export async function proxy(request: NextRequest) {
     return response;
   }
 
+  const sharedCookieOptions = getSharedCookieOptions();
+
   const supabase = createServerClient(supabaseUrl!, supabaseAnonKey!, {
+    ...(sharedCookieOptions ? { cookieOptions: sharedCookieOptions } : {}),
     global: {
       fetch: fetchWithTimeout,
     },
@@ -197,7 +201,11 @@ export async function proxy(request: NextRequest) {
 
         setSecurityHeaders(response.headers);
         cookiesToSet.forEach(({ name, value, options }) => {
-          response.cookies.set(name, value, options);
+          // Belt-and-braces: `cookieOptions` above already merges the shared
+          // domain into every cookie @supabase/ssr sets or removes here
+          // (session refresh on every request, sign-out). Re-applying it
+          // explicitly keeps the proxy correct even if that merge is bypassed.
+          response.cookies.set(name, value, withSharedCookieDomain(options));
         });
       },
     },

@@ -1,5 +1,6 @@
 import { createServerClient as createSupabaseServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
+import { getSharedCookieOptions, withSharedCookieDomain } from './cookie-options';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '';
@@ -104,15 +105,21 @@ export async function createServerClient() {
   }
 
   const cookieStore = await cookies();
+  const cookieOptions = getSharedCookieOptions();
 
   return createSupabaseServerClient(supabaseUrl, supabaseAnonKey, {
+    ...(cookieOptions ? { cookieOptions } : {}),
     cookies: {
       getAll() {
         return cookieStore.getAll();
       },
       setAll(cookiesToSet) {
         cookiesToSet.forEach(({ name, value, options }) => {
-          cookieStore.set(name, value, options);
+          // Belt-and-braces: `cookieOptions` above already merges the shared
+          // domain into every cookie @supabase/ssr sets or removes (sign-in,
+          // refresh, sign-out). We re-apply it here too so this keeps working
+          // even if a future Supabase cookie bypasses that merge.
+          cookieStore.set(name, value, withSharedCookieDomain(options));
         });
       },
     },
