@@ -2440,5 +2440,9 @@
   "deadlines": "Deadlines",
   "heroSection": "Hero Section",
   "opensInNewTab": " (opens in new tab)",
-  "loadingEvents": "Loading events"
+  "loadingEvents": "Loading events",
+  "syllaAssistant": "Sylla AI Study Assistant",
+  "syllaCardDescription": "Turn study material into summaries, flashcards, quizzes, and study plans.",
+  "syllaOpen": "Open Sylla",
+  "syllaOpenAria": "Open Sylla AI Study Assistant in a new tab"
 }

@@ -15,6 +15,7 @@ import { APP_CONFIG, UNIVERSITY_CONFIG } from '@/lib/config';
 import { toastUtils } from '@/lib/utils/toast';
 import { useTypedTranslation } from '@/lib/hooks/useTypedTranslation';
 import { API_ROUTES } from '@/lib/constants/config';
+import { isValidRedirect } from '@/lib/utils/security';
 import { createBrowserClient, isSupabaseConfigured } from '@/lib/supabase/client';
 import { createLoginSchema, type LoginFormData } from './schemas/loginSchema';
 import { loginAction, type MFAFactorInfo } from './actions';
@@ -78,7 +79,16 @@ export default function LoginClient() {
   const [mfaEnabled, setMfaEnabled] = useState(false);
 
   // Redirect Logic
-  const redirectTo = '/home';
+  //
+  // Honor a `redirectTo` query param so sibling apps (e.g. Sylla) can send a
+  // signed-out user to our login page and have them returned afterwards. The
+  // value is validated by `isValidRedirect`: internal whitelist paths, or an
+  // absolute URL whose origin is explicitly allowlisted via
+  // NEXT_PUBLIC_TRUSTED_ORIGINS. Anything else falls back to /home — no open
+  // redirect. Both internal paths and trusted external URLs work with the
+  // `window.location.href = redirectTo` assignments below.
+  const requestedRedirect = searchParams.get('redirectTo');
+  const redirectTo = isValidRedirect(requestedRedirect) ? requestedRedirect! : '/home';
   const forceMfa = searchParams.get('mfa') === '1';
   const callbackError = searchParams.get('error');
   const logoutReason = searchParams.get('reason');
@@ -147,9 +157,8 @@ export default function LoginClient() {
 
       // Mark first-login prompts pending so /home can request notification +
       // geolocation permissions once the user lands there.
-      const { markFirstLoginPromptsPending } = await import(
-        '@/features/home/hooks/useFirstLoginPrompts'
-      );
+      const { markFirstLoginPromptsPending } =
+        await import('@/features/home/hooks/useFirstLoginPrompts');
       markFirstLoginPromptsPending();
 
       // Listen for auth state change to redirect when session is fully mounted
@@ -202,9 +211,8 @@ export default function LoginClient() {
     setGeneralError(null);
     loginWithPasskey(email, async () => {
       setIsSuccess(true);
-      const { markFirstLoginPromptsPending } = await import(
-        '@/features/home/hooks/useFirstLoginPrompts'
-      );
+      const { markFirstLoginPromptsPending } =
+        await import('@/features/home/hooks/useFirstLoginPrompts');
       markFirstLoginPromptsPending();
       setTimeout(() => {
         window.location.href = redirectTo;
@@ -508,9 +516,8 @@ export default function LoginClient() {
                 setMfaState(null);
                 setIsSuccess(true);
                 toastUtils.success(t('welcomeBack'), t('loginSuccess'));
-                const { markFirstLoginPromptsPending } = await import(
-                  '@/features/home/hooks/useFirstLoginPrompts'
-                );
+                const { markFirstLoginPromptsPending } =
+                  await import('@/features/home/hooks/useFirstLoginPrompts');
                 markFirstLoginPromptsPending();
                 setTimeout(() => {
                   window.location.href = redirectTo;
@@ -663,7 +670,8 @@ export default function LoginClient() {
                 variant="outline"
                 className={cn(
                   'h-12 w-full rounded-full flex items-center justify-center gap-2 font-bold',
-                  passkeyStatus === 'available' && 'border-mq-success/30 hover:border-mq-success/50',
+                  passkeyStatus === 'available' &&
+                    'border-mq-success/30 hover:border-mq-success/50',
                 )}
                 onClick={handlePasskeyLogin}
                 disabled={isGlobalLoading || !email || passkeyStatus !== 'available'}

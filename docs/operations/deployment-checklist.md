@@ -22,17 +22,18 @@ Before starting a release, confirm the following:
 
 Open the Vercel project settings and confirm that every required variable is present for the **production** environment. Missing or stale values are the most common cause of post-deploy incidents.
 
-| Category      | Variables                                                                                    | Notes                                                                  |
-| :------------ | :------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------- |
-| Database      | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`     | Service role key is server-side only.                                  |
-| Auth Cookies  | `NEXT_PUBLIC_AUTH_COOKIE_DOMAIN`                                                              | Set to `.syllabus-sync.app` in production so the Supabase session cookie is shared across subdomains (e.g. `www.syllabus-sync.app` and `sylla.syllabus-sync.app`). Leave unset in preview/local — see `lib/supabase/cookie-options.ts`. |
-| Rate Limiting | `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`, `KV_REST_API_URL`, `KV_REST_API_TOKEN` | KV variables required by the production env check script.              |
-| Email         | `RESEND_API_KEY`, `VERIFICATION_EMAIL_FROM`, `VERIFICATION_EMAIL_NAME`                       | Sender must be a verified domain in production.                        |
-| Maps          | `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`, `NEXT_PUBLIC_GOOGLE_MAP_ID`, `GOOGLE_ROUTES_API_KEY`      | See the [Google Maps Platform Setup](./google-maps-platform-setup.md). |
-| Security      | `CRON_SECRET` (min 32 chars), `NEXT_PUBLIC_APP_URL`, `CSRF_VALIDATION_ENABLED`               | Generate CRON_SECRET with `openssl rand -hex 32`.                      |
-| WebAuthn      | `WEBAUTHN_RP_ID`, `WEBAUTHN_ORIGIN`                                                          | Must match your production domain.                                     |
-| Push          | `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`                         | Generate once with `npx web-push generate-vapid-keys`.                 |
-| Observability | `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_ORG`, `SENTRY_PROJECT`, `SENTRY_AUTH_TOKEN`                | DSN must be active for the production environment.                     |
+| Category          | Variables                                                                                    | Notes                                                                                                                                                                                                                                         |
+| :---------------- | :------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Database          | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`     | Service role key is server-side only.                                                                                                                                                                                                         |
+| Auth Cookies      | `NEXT_PUBLIC_AUTH_COOKIE_DOMAIN`                                                             | Set to `.syllabus-sync.app` in production so the Supabase session cookie is shared across subdomains (e.g. `www.syllabus-sync.app` and `sylla.syllabus-sync.app`). Leave unset in preview/local — see `lib/supabase/cookie-options.ts`.       |
+| Sylla (ecosystem) | `NEXT_PUBLIC_TRUSTED_ORIGINS`, `NEXT_PUBLIC_SYLLA_URL`                                       | Optional. `NEXT_PUBLIC_TRUSTED_ORIGINS` (comma-separated, no wildcards) allowlists Sylla for CSRF + post-login redirect; `NEXT_PUBLIC_SYLLA_URL` enables the sidebar link. See [Sylla Shared Auth](#8-sylla-shared-authentication-ecosystem). |
+| Rate Limiting     | `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`, `KV_REST_API_URL`, `KV_REST_API_TOKEN` | KV variables required by the production env check script.                                                                                                                                                                                     |
+| Email             | `RESEND_API_KEY`, `VERIFICATION_EMAIL_FROM`, `VERIFICATION_EMAIL_NAME`                       | Sender must be a verified domain in production.                                                                                                                                                                                               |
+| Maps              | `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`, `NEXT_PUBLIC_GOOGLE_MAP_ID`, `GOOGLE_ROUTES_API_KEY`      | See the [Google Maps Platform Setup](./google-maps-platform-setup.md).                                                                                                                                                                        |
+| Security          | `CRON_SECRET` (min 32 chars), `NEXT_PUBLIC_APP_URL`, `CSRF_VALIDATION_ENABLED`               | Generate CRON_SECRET with `openssl rand -hex 32`.                                                                                                                                                                                             |
+| WebAuthn          | `WEBAUTHN_RP_ID`, `WEBAUTHN_ORIGIN`                                                          | Must match your production domain.                                                                                                                                                                                                            |
+| Push              | `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`                         | Generate once with `npx web-push generate-vapid-keys`.                                                                                                                                                                                        |
+| Observability     | `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_ORG`, `SENTRY_PROJECT`, `SENTRY_AUTH_TOKEN`                | DSN must be active for the production environment.                                                                                                                                                                                            |
 
 You can also validate variable names programmatically:
 
@@ -197,6 +198,50 @@ If the regression was caused by a database migration:
 1. Review the `audit_logs` table and Sentry error stream to identify the root cause.
 2. Document the incident, root cause, and remediation steps.
 3. If the fix is ready, go back to Step 3 (Quality Gate) and re-deploy.
+
+---
+
+## 8. Sylla Shared Authentication (Ecosystem)
+
+Sylla (`https://sylla.syllabus-sync.app`) is a sibling app that shares Syllabus
+Sync's Supabase session. Complete these steps only for deployments where Sylla is
+live. All are additive and safe to skip in single-app or preview environments.
+
+**Prerequisites**
+
+- Sylla and Syllabus Sync point at the **same Supabase project**.
+- Both apps serve from subdomains of the same parent domain (`syllabus-sync.app`).
+
+**Vercel environment variables (production)**
+
+| Variable                         | Value                                                                                     | Purpose                                                                 |
+| :------------------------------- | :---------------------------------------------------------------------------------------- | :---------------------------------------------------------------------- |
+| `NEXT_PUBLIC_AUTH_COOKIE_DOMAIN` | `.syllabus-sync.app`                                                                      | Shares the Supabase session cookie across subdomains (production only). |
+| `NEXT_PUBLIC_TRUSTED_ORIGINS`    | `https://sylla.syllabus-sync.app,https://syllabus-sync.app,https://www.syllabus-sync.app` | Explicit CSRF + redirect allowlist. No wildcards.                       |
+| `NEXT_PUBLIC_SYLLA_URL`          | `https://sylla.syllabus-sync.app`                                                         | Enables the "Sylla AI Study Assistant" sidebar link.                    |
+
+**Supabase Auth configuration**
+
+In the Supabase dashboard → Authentication → URL Configuration, add both apps'
+callback URLs to **Redirect URLs** so OAuth/email links resolve from either origin:
+
+```text
+https://www.syllabus-sync.app/auth/callback
+https://syllabus-sync.app/auth/callback
+https://sylla.syllabus-sync.app/auth/callback   # if Sylla runs its own auth callback
+```
+
+**Verification**
+
+1. Sign in on `www.syllabus-sync.app`, then open `sylla.syllabus-sync.app` — the
+   session should be recognised without a second login.
+2. From a signed-out state, hit `https://www.syllabus-sync.app/login?redirectTo=https://sylla.syllabus-sync.app/`.
+   After login you should be returned to Sylla. A `redirectTo` pointing at any
+   origin **not** in `NEXT_PUBLIC_TRUSTED_ORIGINS` must fall back to `/home`.
+3. Confirm the sidebar shows the Sylla link (only when `NEXT_PUBLIC_SYLLA_URL` is set).
+
+> **Note:** Sylla-side cookie/session configuration is handled in the Sylla repo.
+> This checklist only covers the Syllabus Sync side of the integration.
 
 ---
 

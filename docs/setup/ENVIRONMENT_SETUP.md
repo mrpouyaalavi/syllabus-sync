@@ -72,6 +72,23 @@ Required only if you need the Google map mode (`/map?view=google`). See the full
 2. Copy the DSN as `NEXT_PUBLIC_SENTRY_DSN`.
 3. Sentry is optional during local development but required for production.
 
+### Sylla Companion App (Ecosystem -- Not Needed for Local)
+
+Sylla (`https://sylla.syllabus-sync.app`) is a sibling app that shares Syllabus
+Sync's Supabase session. These variables are only relevant when Sylla is deployed
+and are **safe to leave unset locally** — the shared-cookie logic is gated to
+`NODE_ENV=production` and the sidebar link only renders when its URL is set.
+
+| Variable                         | Scope     | Purpose                                                                                      |
+| :------------------------------- | :-------- | :------------------------------------------------------------------------------------------- |
+| `NEXT_PUBLIC_AUTH_COOKIE_DOMAIN` | Prod only | Shares the Supabase auth cookie across `*.syllabus-sync.app`. Must start with a dot.         |
+| `NEXT_PUBLIC_TRUSTED_ORIGINS`    | Optional  | Comma-separated, exact-match origin allowlist (no wildcards) for CSRF + post-login redirect. |
+| `NEXT_PUBLIC_SYLLA_URL`          | Optional  | Target for the "Sylla AI Study Assistant" sidebar link. The link is hidden when unset.       |
+
+Production setup — including Supabase redirect URLs and verification steps — is in
+the [Sylla Shared Authentication](../operations/deployment-checklist.md#8-sylla-shared-authentication-ecosystem)
+section of the deployment checklist.
+
 ---
 
 ## Step 3: Create the Environment File

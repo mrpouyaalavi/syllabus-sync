@@ -1,5 +1,6 @@
 import type { PasswordStrength } from '@/lib/types';
 import { APP_CONFIG } from '@/lib/config';
+import { getTrustedExternalOrigins } from '@/lib/security/trusted-origins';
 import zxcvbn from 'zxcvbn';
 
 // Centralized whitelist - easier to manage
@@ -25,13 +26,35 @@ export function isValidRedirect(url: string | null): boolean {
   // 2. Allow base URL
   const isBaseUrl = url.startsWith(APP_CONFIG.url);
 
-  if (!isRelative && !isBaseUrl) return false;
+  // 3. Allow explicitly-trusted sibling apps (e.g. Sylla on another subdomain).
+  //    These are absolute URLs whose origin must exactly match an operator-
+  //    configured entry in NEXT_PUBLIC_TRUSTED_ORIGINS — never a wildcard, and
+  //    never inferred from the URL itself. Any path on a trusted origin is
+  //    allowed, since we trust the origin wholesale for the SSO hand-off.
+  if (!isRelative && !isBaseUrl) {
+    return isTrustedExternalRedirect(url);
+  }
 
-  // 3. Whitelist check (Optional: Strict Mode)
+  // 4. Whitelist check for internal destinations (Strict Mode)
   // Remove query params for checking
   const path = url.split('?')[0].replace(APP_CONFIG.url, '');
 
   return SAFE_REDIRECT_PATHS.some((safePath) => path.startsWith(safePath));
+}
+
+/**
+ * True when `url` is an absolute URL whose origin is in the configured
+ * cross-origin allowlist (`NEXT_PUBLIC_TRUSTED_ORIGINS`). Protocol-relative
+ * URLs (`//evil.com`) and anything unparseable are rejected.
+ */
+function isTrustedExternalRedirect(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') return false;
+    return getTrustedExternalOrigins().includes(parsed.origin);
+  } catch {
+    return false;
+  }
 }
 
 // Password strength calculation

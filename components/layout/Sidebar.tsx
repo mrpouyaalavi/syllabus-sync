@@ -26,7 +26,18 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useTypedTranslation } from '@/lib/hooks/useTypedTranslation';
 import { APP_CONFIG } from '@/lib/config';
-import { Home, MapPin, Calendar, MessageSquare, Menu, X, Sparkles, Settings } from 'lucide-react';
+import {
+  Home,
+  MapPin,
+  Calendar,
+  MessageSquare,
+  Menu,
+  X,
+  Sparkles,
+  Settings,
+  BookOpen,
+  ExternalLink,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import SocialButtons from './SocialButtons';
 import { useGamificationStore } from '@/lib/store/gamificationStore';
@@ -49,6 +60,12 @@ const navigation: {
 ];
 
 export const GAMIFICATION_SETTINGS_ROUTE = '/settings/experience';
+
+// Companion app (Sylla) entry point. Rendered only when a URL is configured so
+// the link appears exclusively where the ecosystem is set up (e.g. production).
+// Shared Supabase auth (NEXT_PUBLIC_AUTH_COOKIE_DOMAIN) lets a signed-in user
+// land in Sylla already authenticated. Trimmed to avoid a stray-whitespace URL.
+const SYLLA_URL = process.env.NEXT_PUBLIC_SYLLA_URL?.trim() || undefined;
 
 /**
  * Sidebar Component
@@ -339,6 +356,29 @@ const Sidebar = memo(() => {
           })}
         </nav>
 
+        {/* Sylla companion app — external link, shown only when configured */}
+        {SYLLA_URL && (
+          <a
+            href={SYLLA_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => setMobileMenuOpen(false)}
+            className="mt-2 mb-2 flex items-start gap-3 px-3 py-3 rounded-mq border border-mq-primary/20 bg-gradient-to-r from-mq-primary/10 to-mq-secondary/10 hover:border-mq-primary/40 transition-colors touch-manipulation"
+            aria-label={t('syllaOpenAria')}
+          >
+            <BookOpen className="h-5 w-5 mt-0.5 text-mq-primary shrink-0" aria-hidden="true" />
+            <span className="flex-1 min-w-0">
+              <span className="flex items-center gap-1 text-sm font-medium text-mq-content">
+                {t('syllaAssistant')}
+                <ExternalLink className="h-3 w-3 text-mq-content-secondary" aria-hidden="true" />
+              </span>
+              <span className="block text-[11px] leading-snug text-mq-content-secondary">
+                {t('syllaCardDescription')}
+              </span>
+            </span>
+          </a>
+        )}
+
         {/* Social Buttons */}
         <div className="pt-4 border-t border-mq-border">
           <SocialButtons />
@@ -483,6 +523,29 @@ const Sidebar = memo(() => {
               );
             })}
           </nav>
+
+          {/* Sylla companion app — external link, shown only when configured */}
+          {SYLLA_URL && (
+            <a
+              href={SYLLA_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 flex items-start gap-3 px-3 py-3 rounded-mq border border-mq-primary/20 bg-gradient-to-r from-mq-primary/10 to-mq-secondary/10 hover:border-mq-primary/40 transition-colors sidebar-menu-item"
+              aria-label={t('syllaOpenAria')}
+              title={t('syllaAssistant')}
+            >
+              <BookOpen className="h-4 w-4 mt-0.5 text-mq-primary shrink-0" aria-hidden="true" />
+              <span className="flex-1 min-w-0">
+                <span className="flex items-center gap-1 text-mq-sm font-medium text-mq-content">
+                  {t('syllaAssistant')}
+                  <ExternalLink className="h-3 w-3 text-mq-content-secondary" aria-hidden="true" />
+                </span>
+                <span className="block text-[11px] leading-snug text-mq-content-secondary">
+                  {t('syllaCardDescription')}
+                </span>
+              </span>
+            </a>
+          )}
 
           {/* Social Buttons - fades in last after menu items */}
           <div className="mt-auto pt-6 border-t border-mq-border sidebar-social">

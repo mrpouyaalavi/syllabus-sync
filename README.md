@@ -250,17 +250,25 @@ Individual steps are also available: `npm run typecheck`, `npm run lint`, `npm t
 
 See [`.env.example`](./.env.example) for the full list. Key groups:
 
-| Variable                                                     | Required                  | Purpose                                                                                      |
-| ------------------------------------------------------------ | ------------------------- | -------------------------------------------------------------------------------------------- |
-| `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes                       | Supabase client config                                                                       |
-| `SUPABASE_SERVICE_ROLE_KEY`                                  | Yes (server)              | Server-side Supabase access                                                                  |
-| `WEBAUTHN_RP_ID` / `WEBAUTHN_ORIGIN`                         | Yes                       | Passkey registration/auth — must match your domain                                           |
-| `VERIFICATION_EMAIL_FROM` / Resend key                       | Yes                       | Auth/verification emails via Resend                                                          |
-| `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN`        | Recommended in production | Distributed rate limiting; falls back to in-memory (fail-closed on critical routes) if unset |
-| `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`                            | Optional                  | Enables the Google Maps embed view on `/map`                                                 |
-| `SENTRY_*`                                                   | Optional                  | Error tracking                                                                               |
+| Variable                                                     | Required                  | Purpose                                                                                                       |
+| ------------------------------------------------------------ | ------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes                       | Supabase client config                                                                                        |
+| `SUPABASE_SERVICE_ROLE_KEY`                                  | Yes (server)              | Server-side Supabase access                                                                                   |
+| `WEBAUTHN_RP_ID` / `WEBAUTHN_ORIGIN`                         | Yes                       | Passkey registration/auth — must match your domain                                                            |
+| `VERIFICATION_EMAIL_FROM` / Resend key                       | Yes                       | Auth/verification emails via Resend                                                                           |
+| `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN`        | Recommended in production | Distributed rate limiting; falls back to in-memory (fail-closed on critical routes) if unset                  |
+| `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`                            | Optional                  | Enables the Google Maps embed view on `/map`                                                                  |
+| `SENTRY_*`                                                   | Optional                  | Error tracking                                                                                                |
+| `NEXT_PUBLIC_AUTH_COOKIE_DOMAIN`                             | Prod only                 | Shares the Supabase session across `*.syllabus-sync.app` subdomains (applied only when `NODE_ENV=production`) |
+| `NEXT_PUBLIC_TRUSTED_ORIGINS` / `NEXT_PUBLIC_SYLLA_URL`      | Optional                  | Sylla companion app: explicit CSRF + redirect allowlist, and the sidebar entry point                          |
 
 Full setup notes: [Environment Setup](./docs/operations/ENVIRONMENT_SETUP.md).
+
+> **Ecosystem note:** Syllabus Sync can share its Supabase login with the sibling
+> [Sylla](https://sylla.syllabus-sync.app) study-assistant app via a parent-domain
+> auth cookie and an explicit trusted-origin allowlist (no open redirects). See the
+> [Sylla Shared Authentication](./docs/operations/deployment-checklist.md#8-sylla-shared-authentication-ecosystem)
+> section of the deployment checklist. Sylla itself is a separate application.
 
 <br/>
 
