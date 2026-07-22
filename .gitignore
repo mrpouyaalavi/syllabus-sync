@@ -105,3 +105,4 @@ AUDIT-REPORT-2026-01-29.md
 docs/SECURITY_ENHANCEMENTS.md
 .env*.local
 *.tsbuildinfo
+syllabus-sync-info-site/
