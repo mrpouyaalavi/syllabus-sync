@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import Image from 'next/image';
+import { BrandLogo } from '@/components/brand/BrandLogo';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useForm, useWatch } from 'react-hook-form';
@@ -387,14 +388,21 @@ export default function LoginClient() {
         {/* Left Panel */}
         <div className="w-full lg:w-5/12 bg-mq-background text-mq-content backdrop-blur-xl border-b lg:border-b-0 lg:border-r border-mq-border px-4 sm:px-6 lg:px-12 py-6 sm:py-8 lg:py-12 flex flex-col overflow-y-auto">
           <div className="flex items-center justify-center mb-6 sm:mb-8">
-            <div className="relative w-28 h-28 sm:w-32 sm:h-32 lg:w-40 lg:h-40 flex items-center justify-center">
-              <Image
-                src="/syllabus-sync-logo.png"
-                alt={t('mqLogoAlt', { appName: APP_CONFIG.name })}
-                width={160}
-                height={160}
-                className="object-contain drop-shadow-xl w-full h-full"
+            {/*
+              The tile sizes itself from the artwork's own ratio. A fixed square
+              wrapper used to constrain the old square logo, but the logomark is
+              portrait, so a hard square box made the tile overflow and collide
+              with the heading on narrow screens.
+            */}
+            <div className="relative flex items-center justify-center">
+              <BrandLogo
+                alt={APP_CONFIG.name}
+                className="h-20 w-auto sm:h-24 lg:h-28"
+                height={112}
                 priority
+                tile
+                tileClassName="rounded-3xl p-3 shadow-xl sm:p-4"
+                variant="icon"
               />
             </div>
           </div>

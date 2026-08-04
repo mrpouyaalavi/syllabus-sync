@@ -3,6 +3,7 @@ import { headers } from 'next/headers';
 import './globals.css';
 import ClientLayout from './client-layout';
 import QueryProvider from '@/components/providers/QueryProvider';
+import { BRAND_OG_IMAGE } from '@/lib/brand';
 import { APP_CONFIG, UNIVERSITY_CONFIG } from '@/lib/config';
 import { THEME_SCRIPT, RTL_SCRIPT } from '@/lib/security/csp';
 
@@ -13,7 +14,10 @@ export const metadata: Metadata = {
   },
   description: APP_CONFIG.fullDescription,
   applicationName: APP_CONFIG.name,
-  metadataBase: new URL(UNIVERSITY_CONFIG.website),
+  // Must be this app's own origin. It previously pointed at the university
+  // website, which made every relative metadata URL (including the brand logo)
+  // resolve to a domain we do not control and that does not host these assets.
+  metadataBase: new URL(APP_CONFIG.url),
   alternates: {
     canonical: '/',
   },
@@ -29,14 +33,16 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: '/syllabus-sync-logo.png',
-        alt: `${APP_CONFIG.name} logo`,
+        url: BRAND_OG_IMAGE,
+        width: 1200,
+        height: 630,
+        alt: APP_CONFIG.name,
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    images: ['/syllabus-sync-logo.png'],
+    images: [BRAND_OG_IMAGE],
   },
   icons: {
     icon: '/favicon.ico',
@@ -58,8 +64,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: APP_CONFIG.name,
-    url: UNIVERSITY_CONFIG.website,
-    logo: new URL('/syllabus-sync-logo.png', UNIVERSITY_CONFIG.website).toString(),
+    // The organisation described here is Syllabus Sync, so both the URL and the
+    // logo must resolve against this app's own origin rather than the
+    // university's website.
+    url: APP_CONFIG.url,
+    logo: new URL('/icons/icon-512.png', APP_CONFIG.url).toString(),
   };
 
   return (

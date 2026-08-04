@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "main-app",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 3000
+    },
+    {
+      "name": "info-site",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "syllabus-sync-info-site", "run", "dev"],
+      "port": 3001
+    }
+  ]
+}

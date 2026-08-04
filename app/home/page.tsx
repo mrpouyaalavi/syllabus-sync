@@ -1,5 +1,6 @@
 // app/home/page.tsx
 import { Metadata } from 'next';
+import { BRAND_OG_IMAGE } from '@/lib/brand';
 import { APP_CONFIG, UNIVERSITY_CONFIG } from '@/lib/config';
 import HomeClient from './HomeClient';
 import { createServerClient } from '@/lib/supabase/server';
@@ -16,14 +17,14 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: `${UNIVERSITY_CONFIG.website}/syllabus-sync-logo.png`,
+        url: BRAND_OG_IMAGE,
         alt: `${APP_CONFIG.name} logo`,
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    images: [`${UNIVERSITY_CONFIG.website}/syllabus-sync-logo.png`],
+    images: [BRAND_OG_IMAGE],
   },
 };
 

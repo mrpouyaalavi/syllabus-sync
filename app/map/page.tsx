@@ -1,7 +1,8 @@
 // app/map/page.tsx
 import { Metadata } from 'next';
 import { Suspense } from 'react';
-import { APP_CONFIG, UNIVERSITY_CONFIG } from '@/lib/config';
+import { BRAND_OG_IMAGE } from '@/lib/brand';
+import { APP_CONFIG } from '@/lib/config';
 import { getTranslations, type TranslationKey } from '@/lib/i18n/translations';
 import MapClient from '@/features/map/components/MapClient';
 import { MapPageSkeleton } from '@/features/map/components/MapPageSkeleton';
@@ -32,14 +33,14 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: `${UNIVERSITY_CONFIG.website}/syllabus-sync-logo.png`,
+        url: BRAND_OG_IMAGE,
         alt: translate('mqLogoAlt', { appName: APP_CONFIG.name }),
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    images: [`${UNIVERSITY_CONFIG.website}/syllabus-sync-logo.png`],
+    images: [BRAND_OG_IMAGE],
   },
 };
 

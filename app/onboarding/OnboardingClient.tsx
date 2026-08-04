@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
+import { BrandLogo } from '@/components/brand/BrandLogo';
 import { CourseCombobox } from '@/app/signup/components/CourseCombobox';
 import { FacultySelect } from '@/app/signup/components/FacultySelect';
 import { getYearOptions } from '@/lib/data/mq-courses';
@@ -118,13 +119,13 @@ export default function OnboardingClient() {
             {/* Header */}
             <div className="px-6 pt-8 pb-6 text-center">
               <div className="flex items-center justify-center mb-4">
-                <Image
-                  src="/syllabus-sync-logo.png"
-                  alt={t('mqLogoAlt', { appName: APP_CONFIG.name })}
-                  width={216}
-                  height={216}
-                  className="object-contain"
+                <BrandLogo
+                  alt={APP_CONFIG.name}
+                  height={88}
                   priority
+                  tile
+                  tileClassName="rounded-2xl p-3 shadow-lg"
+                  variant="icon"
                 />
               </div>
               <h1 className="text-2xl font-bold text-mq-content mb-2">{t('onboardingTitle')}</h1>

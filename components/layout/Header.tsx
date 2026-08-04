@@ -26,6 +26,7 @@ import React, { useEffect, useRef, useState, memo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { BrandLogo } from '@/components/brand/BrandLogo';
 import { useTypedTranslation } from '@/lib/hooks/useTypedTranslation';
 import {
   AlertCircle,
@@ -283,14 +284,19 @@ const Header = memo(() => {
       {/* Top row on mobile / Left side on desktop - Logo, title, date, weather */}
       <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
         <Link href="/" className="flex items-center gap-1.5 sm:gap-2 min-w-0 shrink-0">
-          <Image
-            src="/syllabus-sync-logo.png"
-            alt={t('mqLogoAlt', { appName: APP_CONFIG.name })}
-            width={80}
-            height={80}
+          {/*
+            The logomark alone, not the full lockup: the product name is already
+            rendered as text beside it, so a lockup would repeat the wordmark.
+            Keeping the app header to the symbol also keeps the mark sparing.
+          */}
+          <BrandLogo
+            className="h-7 sm:h-9 md:h-10 w-auto"
+            decorative
+            height={40}
             priority
-            className="h-8 sm:h-10 md:h-12 w-auto shrink-0"
-            style={{ width: 'auto' }}
+            tile
+            tileClassName="rounded-xl p-1"
+            variant="icon"
           />
           <div className="min-w-0">
             <span className="text-xs sm:text-sm md:text-base font-semibold text-mq-content block truncate leading-tight">

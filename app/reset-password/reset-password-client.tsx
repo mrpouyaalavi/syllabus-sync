@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Image from 'next/image';
+import { BrandLogo } from '@/components/brand/BrandLogo';
 import { Loader2, CheckCircle2, XCircle, Eye, EyeOff, Mail } from 'lucide-react';
 import { Input } from '@/components/ui/mq/input';
 import { Label } from '@/components/ui/label';
@@ -300,14 +301,14 @@ export default function ResetPasswordClient() {
         <div className="relative z-10 w-full max-w-md animate-in fade-in slide-in-from-bottom-4 duration-500">
           <div className="bg-mq-card-background/85 backdrop-blur-xl border border-mq-border/30 rounded-2xl shadow-[0_18px_70px_rgba(0,0,0,0.3)] p-8 text-center space-y-6">
             <div className="flex justify-center">
-              <Image
-                src="/syllabus-sync-logo.png"
-                alt={t('mqLogoAlt', { appName: APP_CONFIG.name })}
-                width={216}
-                height={216}
-                className="object-contain"
-                priority
-              />
+              <BrandLogo
+                  alt={APP_CONFIG.name}
+                  height={88}
+                  priority
+                  tile
+                  tileClassName="rounded-2xl p-3 shadow-lg"
+                  variant="icon"
+                />
             </div>
             <div className="flex justify-center">
               <div className="w-16 h-16 rounded-full bg-mq-success/15 border border-mq-success/20 flex items-center justify-center">
@@ -352,14 +353,14 @@ export default function ResetPasswordClient() {
         <div className="w-full max-w-md">
           <div className="bg-mq-card-background/85 backdrop-blur-xl border border-mq-border/30 rounded-2xl shadow-[0_18px_70px_rgba(0,0,0,0.3)] p-6 sm:p-8 space-y-6">
             <div className="flex justify-center">
-              <Image
-                src="/syllabus-sync-logo.png"
-                alt={t('mqLogoAlt', { appName: APP_CONFIG.name })}
-                width={216}
-                height={216}
-                className="object-contain"
-                priority
-              />
+              <BrandLogo
+                  alt={APP_CONFIG.name}
+                  height={88}
+                  priority
+                  tile
+                  tileClassName="rounded-2xl p-3 shadow-lg"
+                  variant="icon"
+                />
             </div>
 
             <div className="space-y-1 text-center">

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useForm, Controller } from 'react-hook-form';
 import Image from 'next/image';
+import { BrandLogo } from '@/components/brand/BrandLogo';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Button } from '@/components/ui/mq/button';
@@ -300,14 +301,14 @@ export default function SignupClient() {
                     <Mail className="w-7 h-7 text-white" />
                   </div>
                 ) : (
-                  <Image
-                    src="/syllabus-sync-logo.png"
-                    alt={t('mqLogoAlt', { appName: APP_CONFIG.name })}
-                    width={240}
-                    height={240}
-                    className="object-contain"
-                    priority
-                  />
+                  <BrandLogo
+                  alt={APP_CONFIG.name}
+                  height={96}
+                  priority
+                  tile
+                  tileClassName="rounded-2xl p-3 shadow-lg"
+                  variant="icon"
+                />
                 )}
               </div>
 

@@ -2,6 +2,7 @@
 import { Metadata } from 'next';
 import { Suspense } from 'react';
 import dayjs from 'dayjs';
+import { BRAND_OG_IMAGE } from '@/lib/brand';
 import { APP_CONFIG, UNIVERSITY_CONFIG } from '@/lib/config';
 import { getTranslations, type TranslationKey } from '@/lib/i18n/translations';
 import CalendarClient from './CalendarClient';
@@ -55,7 +56,9 @@ const translate = (key: TranslationKey, vars?: Record<string, string | number>) 
   return text;
 };
 
-const siteUrl = UNIVERSITY_CONFIG.website || 'https://syllabus-sync.vercel.app';
+// This app's own origin, not the university's site: these URLs point at
+// assets and routes that only exist on the Syllabus Sync deployment.
+const siteUrl = APP_CONFIG.url;
 const metaTitle = translate('calendarMetaTitle', { appName: APP_CONFIG.name });
 const metaDescription = translate('calendarMetaDescription', {
   universityName: UNIVERSITY_CONFIG.name,
@@ -78,7 +81,7 @@ export const metadata: Metadata = {
     url: '/calendar',
     images: [
       {
-        url: `${siteUrl}/syllabus-sync-logo.png`,
+        url: new URL(BRAND_OG_IMAGE, siteUrl).toString(),
         alt: translate('mqLogoAlt', { appName: APP_CONFIG.name }),
       },
     ],
@@ -87,7 +90,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: metaOpenGraphTitle,
     description: metaDescription,
-    images: [`${siteUrl}/syllabus-sync-logo.png`],
+    images: [new URL(BRAND_OG_IMAGE, siteUrl).toString()],
   },
 };
 

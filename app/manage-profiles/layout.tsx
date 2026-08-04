@@ -1,6 +1,7 @@
 // app/manage-profiles/layout.tsx
 import { Metadata } from 'next';
-import { APP_CONFIG, UNIVERSITY_CONFIG } from '@/lib/config';
+import { BRAND_OG_IMAGE } from '@/lib/brand';
+import { APP_CONFIG } from '@/lib/config';
 
 export const metadata: Metadata = {
   title: `${APP_CONFIG.name} - Manage Profiles`,
@@ -11,14 +12,14 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: `${UNIVERSITY_CONFIG.website}/syllabus-sync-logo.png`,
+        url: BRAND_OG_IMAGE,
         alt: `${APP_CONFIG.name} logo`,
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    images: [`${UNIVERSITY_CONFIG.website}/syllabus-sync-logo.png`],
+    images: [BRAND_OG_IMAGE],
   },
   robots: {
     index: false,

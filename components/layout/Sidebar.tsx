@@ -22,10 +22,9 @@
 
 import { useState, useRef, useEffect, useCallback, memo } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
+import { BrandLogo } from '@/components/brand/BrandLogo';
 import { usePathname } from 'next/navigation';
 import { useTypedTranslation } from '@/lib/hooks/useTypedTranslation';
-import { APP_CONFIG } from '@/lib/config';
 import {
   Home,
   MapPin,
@@ -284,18 +283,15 @@ const Sidebar = memo(() => {
             ref={firstFocusableRef}
             onClick={() => setMobileMenuOpen(false)}
           >
-            <Image
-              src="/syllabus-sync-logo.png"
-              alt={t('mqLogoAlt', { appName: APP_CONFIG.name })}
-              width={80}
-              height={80}
+            {/* Mobile drawer shows the product name as text beside it, so the symbol alone. */}
+            <BrandLogo
+              className="h-8 w-auto"
+              decorative
+              height={32}
               priority
-              className="h-12 w-auto"
-              style={{
-                objectFit: 'contain',
-                borderRadius: '8px',
-                width: 'auto',
-              }}
+              tile
+              tileClassName="rounded-lg p-1"
+              variant="icon"
             />
             <span className="text-sm font-semibold text-mq-content">{t('appName')}</span>
           </Link>
@@ -443,19 +439,20 @@ const Sidebar = memo(() => {
           {/* Logo - bounces in with slight overshoot */}
           <div className="mb-4 sidebar-logo">
             <Link href="/" className="flex items-center gap-2">
-              <Image
-                src="/syllabus-sync-logo.png"
-                alt={t('mqLogoAlt', { appName: APP_CONFIG.name })}
-                width={128}
-                height={128}
+              {/*
+                The desktop sidebar has no adjacent product name, so it carries
+                the full lockup. The previous inline base64 fallback was a plain
+                Macquarie-red rectangle from the old identity and has been
+                dropped rather than reintroduced.
+              */}
+              <BrandLogo
+                className="h-9 w-auto"
+                height={36}
                 priority
-                className="w-auto h-auto"
-                style={{ objectFit: 'contain', borderRadius: '8px' }}
-                onError={(e) => {
-                  // Fallback for logo image
-                  (e.target as HTMLImageElement).src =
-                    'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDEyOCAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEyOCIgaGVpZ2h0PSIxMjgiIHJ4PSIyNCIgZmlsbD0iI0E2MTkyRSIvPjwvc3ZnPg==';
-                }}
+                sizes="200px"
+                tile
+                tileClassName="rounded-xl px-2.5 py-1.5"
+                variant="wide"
               />
             </Link>
           </div>
