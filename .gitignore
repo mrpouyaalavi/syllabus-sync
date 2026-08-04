@@ -106,3 +106,8 @@ docs/SECURITY_ENHANCEMENTS.md
 .env*.local
 *.tsbuildinfo
 syllabus-sync-info-site/
+
+# Cloudflare Workers / OpenNext build output
+.open-next/
+.wrangler/
+.dev.vars
