@@ -39,7 +39,14 @@
     "vercel:env:check": "node tools/vercel/check-required-env.mjs",
     "vercel:deploy:preview": "node tools/vercel/deploy.mjs",
     "vercel:deploy:prod": "node tools/vercel/deploy.mjs --prod",
-    "prepare": "husky || true"
+    "prepare": "husky || true",
+    "cf:check-env": "node tools/cloudflare/check-build-env.mjs",
+    "cf:build": "npm run cf:check-env && opennextjs-cloudflare build",
+    "cf:preview": "npm run cf:build && wrangler dev",
+    "cf:dry-run": "wrangler deploy --dry-run --outdir .wrangler/dry-run",
+    "cf:deploy": "npm run cf:build && wrangler deploy",
+    "cf:versions:list": "wrangler versions list",
+    "cf:deployments:list": "wrangler deployments list"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -85,6 +92,7 @@
     "@eslint/eslintrc": "3.2.0",
     "@next/bundle-analyzer": "^16.1.6",
     "@next/eslint-plugin-next": "^16.1.6",
+    "@opennextjs/cloudflare": "^1.20.0",
     "@tailwindcss/postcss": "^4.1.18",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.0.1",
@@ -120,7 +128,8 @@
     "tailwindcss": "^4.1.18",
     "typescript": "^5",
     "vite-tsconfig-paths": "^6.0.5",
-    "vitest": "^4.0.16"
+    "vitest": "^4.0.16",
+    "wrangler": "^4.118.0"
   },
   "keywords": [
     "react",
