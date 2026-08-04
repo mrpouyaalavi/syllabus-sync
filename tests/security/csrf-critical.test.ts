@@ -4,6 +4,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { webcrypto } from "node:crypto";
 import { NextRequest } from "next/server";
 import {
   generateCSRFToken,
@@ -47,20 +48,14 @@ class MockRequest {
 
 describe("CSRF Protection", () => {
   beforeEach(() => {
-    // Mock crypto for token generation
+    // The CSRF helpers run on the Edge runtime and therefore use the Web Crypto
+    // API (`crypto.getRandomValues`) rather than Node's `crypto` module. This
+    // stub mirrors that interface. Randomness is delegated to the real
+    // implementation so the uniqueness assertions below stay meaningful.
     vi.stubGlobal("crypto", {
-      randomUUID: () => "test-uuid-" + Math.random().toString(36),
-      randomBytes: (size: number) => {
-        const bytes = new Uint8Array(size);
-        for (let i = 0; i < size; i++) {
-          bytes[i] = Math.floor(Math.random() * 256);
-        }
-        return bytes;
-      },
-      createHash: () => ({
-        update: () => ({}),
-        digest: () => "hashed-token",
-      }),
+      randomUUID: () => webcrypto.randomUUID(),
+      getRandomValues: <T extends ArrayBufferView>(array: T): T =>
+        webcrypto.getRandomValues(array as unknown as Uint8Array) as unknown as T,
     });
   });
 

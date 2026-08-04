@@ -1,4 +1,17 @@
 import '@testing-library/jest-dom/vitest';
+import { webcrypto } from 'node:crypto';
+
+// jsdom exposes no `crypto.getRandomValues`, which the Edge-runtime crypto
+// helpers in lib/security/edge-crypto.ts depend on. Both Node and the Workers
+// runtime provide it natively, so this only fills the gap in the test
+// environment rather than weakening the production implementation.
+if (typeof globalThis.crypto?.getRandomValues !== 'function') {
+  Object.defineProperty(globalThis, 'crypto', {
+    value: webcrypto,
+    configurable: true,
+    writable: true,
+  });
+}
 
 const originalEmitWarning = process.emitWarning;
 process.emitWarning = ((warning: string | Error, ...args: unknown[]) => {

@@ -141,6 +141,18 @@ export async function proxy(request: NextRequest) {
       'Permissions-Policy',
       'camera=(), microphone=(), geolocation=(self), payment=(), usb=()',
     );
+    // Moved here from next.config.ts `headers()`. That block used a catch-all
+    // `source` ('/(.*)'), which the OpenNext router cannot parse: it matches
+    // using Next's compiled regex but then calls path-to-regexp v8 `match()` on
+    // the raw source string, and v8 rejects every catch-all form Next accepts.
+    // The result was a 500 on every dynamic route. Setting them here covers all
+    // rendered responses; static assets are covered by public/_headers.
+    headers.set('X-XSS-Protection', '1; mode=block');
+    headers.set('X-DNS-Prefetch-Control', 'on');
+    headers.set('X-Download-Options', 'noopen');
+    headers.set('X-Permitted-Cross-Domain-Policies', 'none');
+    headers.set('Cross-Origin-Opener-Policy', 'same-origin');
+    headers.set('Cross-Origin-Resource-Policy', 'cross-origin');
   };
 
   setSecurityHeaders(response.headers);
