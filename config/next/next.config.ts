@@ -89,44 +89,16 @@ const nextConfig: NextConfig = {
   // Enable compression
   compress: true,
 
-  async headers() {
-    return [
-      {
-        source: '/(.*)',
-        headers: [
-          // Prevent MIME type sniffing
-          { key: 'X-Content-Type-Options', value: 'nosniff' },
-          // Prevent clickjacking
-          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
-          // Control referrer information
-          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-          // XSS protection (legacy, but still useful for older browsers)
-          { key: 'X-XSS-Protection', value: '1; mode=block' },
-          // Force HTTPS
-          {
-            key: 'Strict-Transport-Security',
-            value: 'max-age=31536000; includeSubDomains; preload',
-          },
-          // CSP is now handled by middleware.ts with nonces
-          // Keeping basic headers here for static assets
-          {
-            key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), geolocation=(self), payment=(), usb=()',
-          },
-          // Allow DNS prefetching for external resources (Supabase, APIs)
-          { key: 'X-DNS-Prefetch-Control', value: 'on' },
-          // Prevent IE from executing downloads in site's context
-          { key: 'X-Download-Options', value: 'noopen' },
-          // Restrict Adobe Flash and PDF cross-domain access
-          { key: 'X-Permitted-Cross-Domain-Policies', value: 'none' },
-          // Indicate this is not an Electron/webview app
-          { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
-          // Allow cross-origin resources for APIs (Supabase, Google Maps, CDNs)
-          { key: 'Cross-Origin-Resource-Policy', value: 'cross-origin' },
-        ],
-      },
-    ];
-  },
+  // NOTE: security headers are intentionally NOT declared here.
+  //
+  // A `headers()` rule needs a `source` pattern, and a catch-all is impossible
+  // to express compatibly: Next accepts '/(.*)' and '/:path*' but rejects
+  // '/*path', while the OpenNext router's path-to-regexp v8 rejects exactly the
+  // first two. Any catch-all therefore threw on every matching request and
+  // produced a site-wide 500 under Cloudflare.
+  //
+  // Security headers now live in lib/proxy.ts (applied to every rendered
+  // response) and in public/_headers (applied to static assets by Cloudflare).
 };
 
 const sentryOptions = {

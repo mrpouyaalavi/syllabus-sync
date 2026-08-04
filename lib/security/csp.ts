@@ -11,7 +11,7 @@
  * unique cryptographic nonce, eliminating the need for 'unsafe-inline' entirely.
  */
 
-import crypto from 'crypto';
+import { randomBase64 } from './edge-crypto';
 
 // ============================================================================
 // NONCE GENERATION
@@ -22,7 +22,7 @@ import crypto from 'crypto';
  * Used by middleware.ts to create a per-request nonce.
  */
 export function generateNonce(): string {
-  return crypto.randomBytes(16).toString('base64');
+  return randomBase64(16);
 }
 
 // ============================================================================

@@ -11,7 +11,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createHash, randomBytes } from 'crypto';
+import { randomHex, sha256Hex } from './edge-crypto';
 import { getTrustedExternalOrigins } from './trusted-origins';
 
 // ============================================================================
@@ -37,14 +37,14 @@ const EXEMPT_PATHS = ['/api/webhooks/', '/api/cron/'];
  * Generate a cryptographically secure CSRF token
  */
 export function generateCSRFToken(): string {
-  return randomBytes(CSRF_TOKEN_LENGTH).toString('hex');
+  return randomHex(CSRF_TOKEN_LENGTH);
 }
 
 /**
  * Hash a CSRF token for comparison (prevents timing attacks)
  */
 function hashToken(token: string): string {
-  return createHash('sha256').update(token).digest('hex');
+  return sha256Hex(token);
 }
 
 /**
