@@ -11,7 +11,7 @@
   "scripts": {
     "dev": "next dev --webpack",
     "dev:turbo": "next dev",
-    "build": "node tools/cloudflare/build.mjs",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint --config config/eslint/eslint.config.mjs \"app/**/*.{ts,tsx}\" \"components/**/*.{ts,tsx}\" \"features/**/*.{ts,tsx}\" \"lib/**/*.{ts,tsx}\" \"data/**/*.{ts,tsx}\" \"config/eslint/eslint.config.mjs\" \"next.config.ts\" && echo \"Lint OK\"",
     "test": "vitest run --config config/vitest/vitest.config.ts",
@@ -41,13 +41,12 @@
     "vercel:deploy:prod": "node tools/vercel/deploy.mjs --prod",
     "prepare": "husky || true",
     "cf:check-env": "node tools/cloudflare/check-build-env.mjs",
-    "cf:build": "npm run cf:check-env && opennextjs-cloudflare build",
+    "cf:build": "npm run cf:check-env && SS_CF_BUILD_ACTIVE=1 npx opennextjs-cloudflare build",
     "cf:preview": "npm run cf:build && wrangler dev",
     "cf:dry-run": "wrangler deploy --dry-run --outdir .wrangler/dry-run",
     "cf:deploy": "npm run cf:build && wrangler deploy",
     "cf:versions:list": "wrangler versions list",
-    "cf:deployments:list": "wrangler deployments list",
-    "build:next": "next build --webpack"
+    "cf:deployments:list": "wrangler deployments list"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

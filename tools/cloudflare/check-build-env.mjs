@@ -39,6 +39,39 @@ if (process.env.CF_SKIP_ENV_CHECK === '1') {
   process.exit(0);
 }
 
+/**
+ * Recursion guard (defense-in-depth).
+ *
+ * The real fix lives in two places: `npm run build` is a plain `next build`
+ * with no Cloudflare-detection logic (package.json), and `open-next.config.ts`
+ * pins `buildCommand` explicitly, so OpenNext's internal Next.js build can
+ * never resolve back to `opennextjs-cloudflare build`. That alone makes
+ * recursion structurally impossible today.
+ *
+ * This check exists only to fail fast — in seconds, not the ~27 minutes it
+ * took Cloudflare's build timeout to kill the actual incident — if a future
+ * change ever makes something re-enter `cf:build`/`cf:check-env` from inside
+ * an already-running `opennextjs-cloudflare build` process.
+ *
+ * `cf:build`'s second step (only) sets SS_CF_BUILD_ACTIVE around the
+ * `opennextjs-cloudflare build` invocation. Child processes inherit it by
+ * default (Node's execSync/spawn inherit process.env unless overridden), so
+ * if that build ever shells back out to `cf:check-env` or `cf:build` — the
+ * exact shape of the original incident — this script sees the marker already
+ * set and aborts immediately instead of silently recursing.
+ */
+if (process.env.SS_CF_BUILD_ACTIVE === '1') {
+  console.error(
+    '\n[cf:check-env] Recursive Cloudflare build detected — aborting immediately.\n' +
+      'This process is running inside an already-active `opennextjs-cloudflare build`,\n' +
+      'which means something re-invoked cf:check-env/cf:build from within itself.\n' +
+      'This exact shape previously caused a ~27-minute hang ending in a Cloudflare\n' +
+      'build timeout. See open-next.config.ts ("buildCommand") and package.json\n' +
+      '("build" / "cf:build") for the fix this guard protects.\n',
+  );
+  process.exit(1);
+}
+
 const missing = REQUIRED.filter((k) => !process.env[k]);
 const absentRecommended = RECOMMENDED.filter((k) => !process.env[k]);
 const problems = [];
