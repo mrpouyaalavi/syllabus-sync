@@ -1614,6 +1614,7 @@
   "clearConfirm": "RÕ RÀNG",
   "loginErrorMissingFields": "Vui lòng nhập email và mật khẩu",
   "loginErrorInvalidCredentials": "Email hoặc mật khẩu không hợp lệ",
+  "loginErrorSessionNotPersisted": "Signed in, but your session could not be saved. Please check that cookies are enabled and try again.",
   "loginErrorEmailNotConfirmed": "Vui lòng kiểm tra email để xác nhận tài khoản của bạn",
   "loginErrorTooManyRequests": "Quá nhiều lần thử đăng nhập. Vui lòng chờ vài phút.",
   "loginErrorFailed": "Đăng nhập không thành công. Vui lòng thử lại.",

@@ -1614,6 +1614,7 @@
   "clearConfirm": "LIMPAR",
   "loginErrorMissingFields": "Por favor insira e-mail e senha",
   "loginErrorInvalidCredentials": "E-mail ou senha inválida",
+  "loginErrorSessionNotPersisted": "Signed in, but your session could not be saved. Please check that cookies are enabled and try again.",
   "loginErrorEmailNotConfirmed": "Verifique seu e-mail para confirmar sua conta",
   "loginErrorTooManyRequests": "Muitas tentativas de login. Aguarde alguns minutos.",
   "loginErrorFailed": "Falha no login. Por favor, tente novamente.",

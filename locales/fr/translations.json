@@ -1614,6 +1614,7 @@
   "clearConfirm": "CLAIR",
   "loginErrorMissingFields": "Veuillez entrer votre email et votre mot de passe",
   "loginErrorInvalidCredentials": "Email ou mot de passe invalide",
+  "loginErrorSessionNotPersisted": "Signed in, but your session could not be saved. Please check that cookies are enabled and try again.",
   "loginErrorEmailNotConfirmed": "Veuillez vérifier votre courrier électronique pour confirmer votre compte",
   "loginErrorTooManyRequests": "Trop de tentatives de connexion. Veuillez patienter quelques minutes.",
   "loginErrorFailed": "La connexion a échoué. Veuillez réessayer.",

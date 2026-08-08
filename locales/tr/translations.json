@@ -1614,6 +1614,7 @@
   "clearConfirm": "TEMİZLE",
   "loginErrorMissingFields": "Lütfen e-posta adresinizi ve şifrenizi girin",
   "loginErrorInvalidCredentials": "Geçersiz e-posta veya şifre",
+  "loginErrorSessionNotPersisted": "Signed in, but your session could not be saved. Please check that cookies are enabled and try again.",
   "loginErrorEmailNotConfirmed": "Hesabınızı onaylamak için lütfen e-postanızı kontrol edin",
   "loginErrorTooManyRequests": "Çok fazla oturum açma denemesi. Lütfen birkaç dakika bekleyin.",
   "loginErrorFailed": "Giriş başarısız oldu. Lütfen tekrar deneyin.",

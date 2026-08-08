@@ -1614,6 +1614,7 @@
   "clearConfirm": "KLART",
   "loginErrorMissingFields": "Vänligen ange e-postadress och lösenord",
   "loginErrorInvalidCredentials": "Ogiltig e-postadress eller lösenord",
+  "loginErrorSessionNotPersisted": "Signed in, but your session could not be saved. Please check that cookies are enabled and try again.",
   "loginErrorEmailNotConfirmed": "Kontrollera din e-post för att bekräfta ditt konto",
   "loginErrorTooManyRequests": "För många inloggningsförsök. Vänta några minuter.",
   "loginErrorFailed": "Inloggningen misslyckades. Försök igen.",

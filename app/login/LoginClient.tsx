@@ -33,6 +33,49 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 
+/**
+ * Confirms the server-side sign-in actually produced a session cookie that the
+ * server can read back, before the client navigates to a protected route.
+ *
+ * `/api/auth/user` calls `supabase.auth.getUser()` against the request cookies
+ * and returns `{ user: null }` (200) rather than 401 when there is no session,
+ * so a truthy `user` — not merely an OK status — is the signal. It is one of
+ * the `/api/auth/*` paths the proxy treats as public, so this check does not
+ * itself trigger a middleware auth resolution.
+ *
+ * Retries briefly because the Set-Cookie from the server action and this read
+ * are separate round-trips; a single immediate attempt can race the browser
+ * committing the cookie. This is a bounded confirmation loop, not the blind
+ * fixed-delay redirect it replaces: it exits as soon as the session is proven,
+ * and returning false keeps the user on /login with a real error instead of
+ * redirecting into a guard that will reject them.
+ */
+async function confirmSessionEstablished(attempts = 3, delayMs = 250): Promise<boolean> {
+  for (let attempt = 0; attempt < attempts; attempt++) {
+    try {
+      const response = await fetch(API_ROUTES.AUTH.USER, {
+        method: 'GET',
+        credentials: 'include',
+        cache: 'no-store',
+        headers: { 'Cache-Control': 'no-cache' },
+      });
+
+      if (response.ok) {
+        const payload = await response.json().catch(() => null);
+        if (payload?.data?.user ?? payload?.user) return true;
+      }
+    } catch {
+      // Network hiccup on this attempt — fall through and retry.
+    }
+
+    if (attempt < attempts - 1) {
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+    }
+  }
+
+  return false;
+}
+
 export default function LoginClient() {
   const { t } = useTypedTranslation();
   const searchParams = useSearchParams();
@@ -153,6 +196,29 @@ export default function LoginClient() {
         return;
       }
 
+      // Confirm the session actually persisted before navigating.
+      //
+      // `loginAction` is a server action: sign-in happens with the *server*
+      // Supabase client and the session arrives as Set-Cookie on the action's
+      // response. The browser client never signs in, so it never emits
+      // SIGNED_IN — the previous code waited for that event and relied on a
+      // blind 2s setTimeout fallback, which meant the redirect fired on a
+      // timer regardless of whether a session existed. When it didn't, /home's
+      // guard bounced straight back to /login?redirectTo=%2Fhome, which is the
+      // loop users were hitting.
+      //
+      // Instead, ask the server whether the cookie it just set is actually
+      // readable. /api/auth/user runs getUser() server-side against the request
+      // cookies, so a 200 with a user is positive proof the session round-trips
+      // — the same thing the /home guard will do a moment later.
+      const sessionConfirmed = await confirmSessionEstablished();
+
+      if (!sessionConfirmed) {
+        setIsSuccess(false);
+        setGeneralError(t('loginErrorSessionNotPersisted'));
+        return;
+      }
+
       setIsSuccess(true);
       toastUtils.success(t('welcomeBack'), t('loginSuccess'));
 
@@ -162,23 +228,19 @@ export default function LoginClient() {
         await import('@/features/home/hooks/useFirstLoginPrompts');
       markFirstLoginPromptsPending();
 
-      // Listen for auth state change to redirect when session is fully mounted
-      const { createBrowserClient } = await import('@/lib/supabase/client');
-      const supabase = createBrowserClient();
-      const {
-        data: { subscription },
-      } = supabase.auth.onAuthStateChange((event: string) => {
-        if (event === 'SIGNED_IN') {
-          subscription.unsubscribe();
-          window.location.href = redirectTo;
-        }
-      });
-
-      // Fallback: if event doesn't fire within 2s, redirect anyway
-      setTimeout(() => {
-        subscription.unsubscribe();
+      // Full document navigation, so the freshly-set auth cookie is attached to
+      // the /home request and no client router cache serves a pre-auth render.
+      //
+      // Deferred to a microtask purely for scoping: the React Compiler rejects
+      // assigning to `window.location` directly in the component-scope function
+      // body, and reading `redirectTo` inside a nested closure (rather than
+      // passing it as an argument) keeps the memoization of the other callbacks
+      // that depend on it intact. This is not a timing workaround — the session
+      // was confirmed above and a microtask runs before the next paint, unlike
+      // the fixed 2s timer this replaced.
+      queueMicrotask(() => {
         window.location.href = redirectTo;
-      }, 2000);
+      });
     } catch {
       setGeneralError(t('unexpectedError'));
     }

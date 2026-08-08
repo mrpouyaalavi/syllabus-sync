@@ -1614,6 +1614,7 @@
   "clearConfirm": "CLEAR",
   "loginErrorMissingFields": "Zadejte e-mail a heslo",
   "loginErrorInvalidCredentials": "Neplatný e-mail nebo heslo",
+  "loginErrorSessionNotPersisted": "Signed in, but your session could not be saved. Please check that cookies are enabled and try again.",
   "loginErrorEmailNotConfirmed": "Zkontrolujte svůj e-mail a potvrďte svůj účet",
   "loginErrorTooManyRequests": "Příliš mnoho pokusů o přihlášení. Počkejte prosím několik minut.",
   "loginErrorFailed": "Přihlášení se nezdařilo. Zkuste to prosím znovu.",

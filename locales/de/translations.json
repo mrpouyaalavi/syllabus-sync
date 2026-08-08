@@ -1614,6 +1614,7 @@
   "clearConfirm": "KLAR",
   "loginErrorMissingFields": "Bitte geben Sie E-Mail und Passwort ein",
   "loginErrorInvalidCredentials": "Ungültige E-Mail-Adresse oder ungültiges Passwort",
+  "loginErrorSessionNotPersisted": "Signed in, but your session could not be saved. Please check that cookies are enabled and try again.",
   "loginErrorEmailNotConfirmed": "Bitte überprüfen Sie Ihre E-Mails, um Ihr Konto zu bestätigen",
   "loginErrorTooManyRequests": "Zu viele Anmeldeversuche. Bitte warten Sie ein paar Minuten.",
   "loginErrorFailed": "Die Anmeldung ist fehlgeschlagen. Bitte versuchen Sie es erneut.",

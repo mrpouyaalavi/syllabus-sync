@@ -1614,6 +1614,7 @@
   "clearConfirm": "CLEAR",
   "loginErrorMissingFields": "Kérjük, adja meg az e-mail címet és a jelszót",
   "loginErrorInvalidCredentials": "Érvénytelen e-mail cím vagy jelszó",
+  "loginErrorSessionNotPersisted": "Signed in, but your session could not be saved. Please check that cookies are enabled and try again.",
   "loginErrorEmailNotConfirmed": "Kérjük, ellenőrizze e-mailjét a fiók megerősítéséhez",
   "loginErrorTooManyRequests": "Túl sok bejelentkezési kísérlet. Kérjük, várjon néhány percet.",
   "loginErrorFailed": "Sikertelen bejelentkezés. Kérjük, próbálja újra.",

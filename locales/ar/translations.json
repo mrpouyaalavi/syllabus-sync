@@ -1614,6 +1614,7 @@
   "clearConfirm": "واضح",
   "loginErrorMissingFields": "الرجاء إدخال البريد الإلكتروني وكلمة المرور",
   "loginErrorInvalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صالحة",
+  "loginErrorSessionNotPersisted": "Signed in, but your session could not be saved. Please check that cookies are enabled and try again.",
   "loginErrorEmailNotConfirmed": "يرجى التحقق من بريدك الإلكتروني لتأكيد حسابك",
   "loginErrorTooManyRequests": "عدد كبير جدًا من محاولات تسجيل الدخول. يرجى الانتظار بضع دقائق.",
   "loginErrorFailed": "فشل تسجيل الدخول. يرجى المحاولة مرة أخرى.",

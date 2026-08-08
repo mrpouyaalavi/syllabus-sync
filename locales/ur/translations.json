@@ -1614,6 +1614,7 @@
   "clearConfirm": "صاف کریں۔",
   "loginErrorMissingFields": "براہ کرم ای میل اور پاس ورڈ درج کریں۔",
   "loginErrorInvalidCredentials": "غلط ای میل یا پاس ورڈ",
+  "loginErrorSessionNotPersisted": "Signed in, but your session could not be saved. Please check that cookies are enabled and try again.",
   "loginErrorEmailNotConfirmed": "اپنے اکاؤنٹ کی تصدیق کے لیے براہ کرم اپنا ای میل چیک کریں۔",
   "loginErrorTooManyRequests": "لاگ ان کی بہت زیادہ کوششیں براہ کرم چند منٹ انتظار کریں۔",
   "loginErrorFailed": "لاگ ان ناکام ہو گیا۔ براہ کرم دوبارہ کوشش کریں۔",

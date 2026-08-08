@@ -1614,6 +1614,7 @@
   "clearConfirm": "পরিষ্কার",
   "loginErrorMissingFields": "ইমেল এবং পাসওয়ার্ড লিখুন",
   "loginErrorInvalidCredentials": "অবৈধ ইমেল বা পাসওয়ার্ড",
+  "loginErrorSessionNotPersisted": "Signed in, but your session could not be saved. Please check that cookies are enabled and try again.",
   "loginErrorEmailNotConfirmed": "আপনার অ্যাকাউন্ট নিশ্চিত করতে আপনার ইমেল চেক করুন",
   "loginErrorTooManyRequests": "অনেকগুলি লগইন প্রচেষ্টা। কয়েক মিনিট অপেক্ষা করুন.",
   "loginErrorFailed": "লগইন ব্যর্থ হয়েছে. আবার চেষ্টা করুন.",

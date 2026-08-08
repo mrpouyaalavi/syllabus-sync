@@ -1614,6 +1614,7 @@
   "clearConfirm": "පැහැදිලි",
   "loginErrorMissingFields": "කරුණාකර විද්‍යුත් තැපෑල සහ මුරපදය ඇතුළත් කරන්න",
   "loginErrorInvalidCredentials": "වලංගු නොවන ඊමේල් හෝ මුරපදය",
+  "loginErrorSessionNotPersisted": "Signed in, but your session could not be saved. Please check that cookies are enabled and try again.",
   "loginErrorEmailNotConfirmed": "ඔබගේ ගිණුම තහවුරු කිරීමට කරුණාකර ඔබගේ විද්‍යුත් තැපෑල පරීක්ෂා කරන්න",
   "loginErrorTooManyRequests": "පුරනය වීමේ උත්සාහයන් වැඩියි. කරුණාකර විනාඩි කිහිපයක් රැඳී සිටින්න.",
   "loginErrorFailed": "පුරනය වීම අසාර්ථක විය. කරුණාකර නැවත උත්සාහ කරන්න.",

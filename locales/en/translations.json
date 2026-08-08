@@ -1621,6 +1621,7 @@
   "clearConfirm": "CLEAR",
   "loginErrorMissingFields": "Please enter email and password",
   "loginErrorInvalidCredentials": "Invalid email or password",
+  "loginErrorSessionNotPersisted": "Signed in, but your session could not be saved. Please check that cookies are enabled and try again.",
   "loginErrorEmailNotConfirmed": "Please check your email to confirm your account",
   "loginErrorTooManyRequests": "Too many login attempts. Please wait a few minutes.",
   "loginErrorFailed": "Login failed. Please try again.",

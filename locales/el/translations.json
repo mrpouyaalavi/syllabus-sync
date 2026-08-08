@@ -1614,6 +1614,7 @@
   "clearConfirm": "ΣΑΦΗΣ",
   "loginErrorMissingFields": "Εισαγάγετε email και κωδικό πρόσβασης",
   "loginErrorInvalidCredentials": "Μη έγκυρο email ή κωδικός πρόσβασης",
+  "loginErrorSessionNotPersisted": "Signed in, but your session could not be saved. Please check that cookies are enabled and try again.",
   "loginErrorEmailNotConfirmed": "Ελέγξτε το email σας για να επιβεβαιώσετε τον λογαριασμό σας",
   "loginErrorTooManyRequests": "Πάρα πολλές προσπάθειες σύνδεσης. Περιμένετε λίγα λεπτά.",
   "loginErrorFailed": "Η σύνδεση απέτυχε. Δοκιμάστε ξανά.",

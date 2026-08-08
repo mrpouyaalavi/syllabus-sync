@@ -1614,6 +1614,7 @@
   "clearConfirm": "پاک کردن",
   "loginErrorMissingFields": "لطفا ایمیل و رمز عبور را وارد کنید",
   "loginErrorInvalidCredentials": "ایمیل یا رمز عبور نامعتبر است",
+  "loginErrorSessionNotPersisted": "Signed in, but your session could not be saved. Please check that cookies are enabled and try again.",
   "loginErrorEmailNotConfirmed": "لطفا ایمیل خود را برای تایید حساب خود بررسی کنید",
   "loginErrorTooManyRequests": "تلاش های زیادی برای ورود به سیستم لطفا چند دقیقه صبر کنید.",
   "loginErrorFailed": "ورود ناموفق بود. لطفا دوباره امتحان کنید.",

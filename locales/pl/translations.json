@@ -1614,6 +1614,7 @@
   "clearConfirm": "JASNE",
   "loginErrorMissingFields": "Proszę podać e-mail i hasło",
   "loginErrorInvalidCredentials": "Nieprawidłowy adres e-mail lub hasło",
+  "loginErrorSessionNotPersisted": "Signed in, but your session could not be saved. Please check that cookies are enabled and try again.",
   "loginErrorEmailNotConfirmed": "Sprawdź swoją pocztę e-mail, aby potwierdzić swoje konto",
   "loginErrorTooManyRequests": "Zbyt wiele prób logowania. Proszę poczekać kilka minut.",
   "loginErrorFailed": "Logowanie nie powiodło się. Spróbuj ponownie.",
