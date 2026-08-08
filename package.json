@@ -168,9 +168,6 @@
     "path-to-regexp": "^8.3.0",
     "tar": "^7.5.11",
     "@tootallnate/once": "^3.0.1",
-    "next": {
-      "postcss": "8.5.10"
-    },
     "svix": "1.92.2"
   },
   "lint-staged": {
