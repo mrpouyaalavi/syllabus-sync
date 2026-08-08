@@ -1,12 +1,11 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "syllabus-sync-production",
-  "main": ".open-next/worker.js",
-  "compatibility_date": "2025-09-01",
-  // nodejs_compat is required by the OpenNext server bundle.
-  // global_fetch_strictly_public makes same-origin fetches go through the
-  // public internet rather than looping back into the Worker, which is what
-  // the adapter expects.
+  "main": "cloudflare/worker.js",
+
+  // Matches the live Worker exactly. Wrangler config is declarative: lowering
+  // this date or dropping a flag would silently change runtime behaviour.
+  "compatibility_date": "2026-07-22",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
 
   "assets": {
@@ -16,34 +15,40 @@
 
   // Cloudflare's native image resizing backs `next/image`. Without this binding
   // every /_next/image request fails and each logo renders broken.
-  // See https://opennext.js.org/cloudflare/howtos/image
   "images": {
     "binding": "IMAGES"
+  },
+
+  // Self-reference binding used by the OpenNext runtime. Present on the live
+  // Worker — omitting it here would remove it on the next deploy.
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "syllabus-sync-production"
+    }
+  ],
+
+  // Mirrors the plain-text vars already set on the live Worker. Secrets
+  // (CRON_SECRET, SUPABASE_SERVICE_ROLE_KEY, WEBAUTHN_*, RESEND_API_KEY, …)
+  // are stored separately and are NOT affected by deploys.
+  "vars": {
+    "DEPLOYMENT_ENV": "production",
+    "DEPLOYMENT_PLATFORM": "cloudflare",
+    "NEXT_PUBLIC_APP_URL": "https://www.syllabus-sync.app"
   },
 
   "observability": {
     "enabled": true
   },
 
-  // Preserves the three cleanup jobs that previously ran as Vercel crons.
-  // These fire the Worker's `scheduled()` handler; see cloudflare/worker.ts,
-  // which forwards each one to its existing API route.
+  // The three cleanup jobs. cloudflare/worker.js forwards each schedule to its
+  // existing API route, which is why the live Worker reports both a `fetch` and
+  // a `scheduled` handler.
   "triggers": {
     "crons": ["0 3 * * *", "10 3 * * *", "20 3 * * *"]
   }
 
-  // NOTE — bindings intentionally NOT declared here:
-  // This application talks to Supabase, Resend, Sentry and the rate-limit KV
-  // over HTTPS; it uses no KV / D1 / R2 / Durable Object / Queue bindings
-  // (verified by grepping for getCloudflareContext and env.* binding access).
-  //
-  // Wrangler config is DECLARATIVE: any binding, route or trigger that exists
-  // on the deployed Worker but is absent here is REMOVED on deploy. Before the
-  // first `wrangler deploy` from this config, confirm against the dashboard
-  // that the live Worker has no bindings beyond the above, and add any that it
-  // does have. Secrets are stored separately and are not affected.
-  //
-  // Runtime (non-public) configuration — CRON_SECRET, SUPABASE_SERVICE_ROLE_KEY,
-  // RESEND_API_KEY, WEBAUTHN_RP_ID, WEBAUTHN_ORIGIN, etc. — stays in Worker
-  // secrets/vars and is deliberately not committed here.
+  // The custom domain (www.syllabus-sync.app) is attached to the Worker as a
+  // separate resource and is deliberately not declared here — declaring
+  // `routes` would take over management of it.
 }
