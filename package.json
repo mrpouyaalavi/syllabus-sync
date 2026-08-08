@@ -43,10 +43,11 @@
     "cf:check-env": "node tools/cloudflare/check-build-env.mjs",
     "cf:build": "npm run cf:check-env && SS_CF_BUILD_ACTIVE=1 npx opennextjs-cloudflare build",
     "cf:preview": "npm run cf:build && wrangler dev",
-    "cf:dry-run": "wrangler deploy --dry-run --outdir .wrangler/dry-run",
-    "cf:deploy": "npm run cf:build && wrangler deploy",
+    "cf:dry-run": "npm run cf:build && npm run cf:verify-output && wrangler deploy --dry-run --outdir .wrangler/dry-run",
+    "cf:deploy": "npm run cf:build && npm run cf:verify-output && wrangler deploy",
     "cf:versions:list": "wrangler versions list",
-    "cf:deployments:list": "wrangler deployments list"
+    "cf:deployments:list": "wrangler deployments list",
+    "cf:verify-output": "node tools/cloudflare/verify-open-next-output.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
