@@ -51,4 +51,9 @@
   // The custom domain (www.syllabus-sync.app) is attached to the Worker as a
   // separate resource and is deliberately not declared here — declaring
   // `routes` would take over management of it.
+  //
+  // verify: 2026-08-08 — no-op change to trigger a real Cloudflare Git build
+  // and confirm the dashboard's Workers Builds environment variables
+  // (NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, etc.) are
+  // actually visible to `next build` there, not just in a local/manual deploy.
 }
