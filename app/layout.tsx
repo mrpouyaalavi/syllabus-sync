@@ -45,7 +45,17 @@ export const metadata: Metadata = {
     images: [BRAND_OG_IMAGE],
   },
   icons: {
-    icon: '/favicon.ico',
+    // No `icon` entry here on purpose. `app/favicon.ico` is already picked up
+    // by Next's file-convention icon handling, which emits its own
+    // <link rel="icon"> with a content-hash query string
+    // (e.g. /favicon.ico?3651fd3d2869c254) that changes whenever the file's
+    // bytes change — the browser treats it as a new resource automatically.
+    // Declaring `icon: '/favicon.ico'` here duplicated that with a second,
+    // un-hashed <link rel="icon" href="/favicon.ico"> tag, and browsers don't
+    // consistently prefer one over the other. That static URL is exactly the
+    // one vulnerable to the stale-favicon caching bug fixed in public/sw.js —
+    // removing the duplicate leaves Next's self-invalidating link as the only
+    // favicon declaration.
     apple: '/apple-touch-icon.png',
   },
 };

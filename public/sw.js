@@ -5,9 +5,21 @@
 // SECURITY: This service worker implements a strict caching policy to prevent
 // sensitive data from being cached and exposed after logout or on shared devices.
 
-const CACHE_NAME = "syllabus-sync-v7"; // Bump version for cache invalidation
-const STATIC_CACHE = "syllabus-sync-static-v7";
-const DYNAMIC_CACHE = "syllabus-sync-dynamic-v7";
+// Root cause of "browser favicon still shows the old logo": /favicon.ico is
+// precached (STATIC_ASSETS below) and served cache-first. The lion/dragon
+// brand update replaced its bytes on the server, but this cache version
+// wasn't bumped alongside it, so every returning visitor's service worker
+// kept serving the favicon it precached before the rebrand — confirmed by
+// diffing the live response against app/favicon.ico (identical, correct,
+// new artwork) while the browser tab still showed the old icon. Bumping the
+// version below changes this file's own bytes, which is what actually
+// triggers the browser to install a new worker, precache fresh assets, and
+// (via the activate handler further down) delete the old cache — the same
+// fix applied for the previous logo change in the "bump SW cache version"
+// commit.
+const CACHE_NAME = "syllabus-sync-v8"; // Bump version for cache invalidation
+const STATIC_CACHE = "syllabus-sync-static-v8";
+const DYNAMIC_CACHE = "syllabus-sync-dynamic-v8";
 const MAP_CACHE = "syllabus-sync-map-v1"; // Dedicated cache for map assets
 
 // SECURITY: Only cache truly static assets - NO HTML pages that may contain user data
