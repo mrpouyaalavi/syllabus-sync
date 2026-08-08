@@ -11,7 +11,7 @@
   "scripts": {
     "dev": "next dev --webpack",
     "dev:turbo": "next dev",
-    "build": "next build --webpack",
+    "build": "node tools/cloudflare/build.mjs",
     "start": "next start",
     "lint": "eslint --config config/eslint/eslint.config.mjs \"app/**/*.{ts,tsx}\" \"components/**/*.{ts,tsx}\" \"features/**/*.{ts,tsx}\" \"lib/**/*.{ts,tsx}\" \"data/**/*.{ts,tsx}\" \"config/eslint/eslint.config.mjs\" \"next.config.ts\" && echo \"Lint OK\"",
     "test": "vitest run --config config/vitest/vitest.config.ts",
@@ -46,7 +46,8 @@
     "cf:dry-run": "wrangler deploy --dry-run --outdir .wrangler/dry-run",
     "cf:deploy": "npm run cf:build && wrangler deploy",
     "cf:versions:list": "wrangler versions list",
-    "cf:deployments:list": "wrangler deployments list"
+    "cf:deployments:list": "wrangler deployments list",
+    "build:next": "next build --webpack"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
