@@ -41,6 +41,21 @@
     "enabled": true
   },
 
+  // The custom domain (www.syllabus-sync.app) is the only intended production
+  // origin. workers_dev defaults to enabled when unset — Cloudflare warned
+  // about this on the very first deploy of this Worker — which meant
+  // syllabus-sync-production.<account>.workers.dev also served live traffic.
+  // Verified before disabling: NEXT_PUBLIC_APP_URL, WEBAUTHN_RP_ID and
+  // WEBAUTHN_ORIGIN are all scoped to the custom domain, and the OAuth
+  // callback URL is built from window.location.origin — so a request that
+  // arrives via workers.dev would already fail WebAuthn's strict origin check
+  // and, unless Supabase's redirect allowlist was separately configured to
+  // include the workers.dev host (nothing in this repo suggests it is), the
+  // OAuth exchange too. workers.dev therefore added an unauthenticated-anyway
+  // second origin with no functional value. Disabling it is reversible by
+  // flipping this back to true.
+  "workers_dev": false,
+
   // The three cleanup jobs. cloudflare/worker.js forwards each schedule to its
   // existing API route, which is why the live Worker reports both a `fetch` and
   // a `scheduled` handler.
