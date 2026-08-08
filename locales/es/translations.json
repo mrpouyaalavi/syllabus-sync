@@ -1614,6 +1614,7 @@
   "clearConfirm": "BORRAR",
   "loginErrorMissingFields": "Por favor ingrese correo electrónico y contraseña",
   "loginErrorInvalidCredentials": "Correo electrónico o contraseña no válidos",
+  "loginErrorSessionNotPersisted": "Signed in, but your session could not be saved. Please check that cookies are enabled and try again.",
   "loginErrorEmailNotConfirmed": "Por favor revise su correo electrónico para confirmar su cuenta.",
   "loginErrorTooManyRequests": "Demasiados intentos de inicio de sesión. Espere unos minutos.",
   "loginErrorFailed": "Error al iniciar sesión. Por favor inténtalo de nuevo.",

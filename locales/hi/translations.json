@@ -1614,6 +1614,7 @@
   "clearConfirm": "स्पष्ट",
   "loginErrorMissingFields": "कृपया ईमेल और पासवर्ड दर्ज करें",
   "loginErrorInvalidCredentials": "अमान्य ईमेल या पासवर्ड",
+  "loginErrorSessionNotPersisted": "Signed in, but your session could not be saved. Please check that cookies are enabled and try again.",
   "loginErrorEmailNotConfirmed": "कृपया अपने खाते की पुष्टि के लिए अपना ईमेल जांचें",
   "loginErrorTooManyRequests": "बहुत अधिक लॉगिन प्रयास. कृपया कुछ मिनट प्रतीक्षा करें.",
   "loginErrorFailed": "लॉगिन विफल। कृपया पुन: प्रयास करें।",

@@ -1614,6 +1614,7 @@
   "clearConfirm": "KLAR",
   "loginErrorMissingFields": "Vennligst skriv inn e-post og passord",
   "loginErrorInvalidCredentials": "Ugyldig e-postadresse eller passord",
+  "loginErrorSessionNotPersisted": "Signed in, but your session could not be saved. Please check that cookies are enabled and try again.",
   "loginErrorEmailNotConfirmed": "Sjekk e-posten din for å bekrefte kontoen din",
   "loginErrorTooManyRequests": "For mange påloggingsforsøk. Vennligst vent noen minutter.",
   "loginErrorFailed": "Innlogging mislyktes. Vennligst prøv igjen.",

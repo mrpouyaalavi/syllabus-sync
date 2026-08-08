@@ -1614,6 +1614,7 @@
   "clearConfirm": "HELDER",
   "loginErrorMissingFields": "Voer uw e-mailadres en wachtwoord in",
   "loginErrorInvalidCredentials": "Ongeldig e-mailadres of wachtwoord",
+  "loginErrorSessionNotPersisted": "Signed in, but your session could not be saved. Please check that cookies are enabled and try again.",
   "loginErrorEmailNotConfirmed": "Controleer uw e-mail om uw account te bevestigen",
   "loginErrorTooManyRequests": "Te veel inlogpogingen. Wacht een paar minuten.",
   "loginErrorFailed": "Inloggen mislukt. Probeer het opnieuw.",

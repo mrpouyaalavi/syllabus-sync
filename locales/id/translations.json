@@ -1614,6 +1614,7 @@
   "clearConfirm": "JELAS",
   "loginErrorMissingFields": "Silakan masukkan email dan kata sandi",
   "loginErrorInvalidCredentials": "Email atau kata sandi tidak valid",
+  "loginErrorSessionNotPersisted": "Signed in, but your session could not be saved. Please check that cookies are enabled and try again.",
   "loginErrorEmailNotConfirmed": "Silakan periksa email Anda untuk mengonfirmasi akun Anda",
   "loginErrorTooManyRequests": "Terlalu banyak upaya login. Harap tunggu beberapa menit.",
   "loginErrorFailed": "Gagal masuk. Silakan coba lagi.",

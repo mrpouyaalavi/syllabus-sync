@@ -1614,6 +1614,7 @@
   "clearConfirm": "TYHJENNÄ",
   "loginErrorMissingFields": "Anna sähköpostiosoite ja salasana",
   "loginErrorInvalidCredentials": "Virheellinen sähköpostiosoite tai salasana",
+  "loginErrorSessionNotPersisted": "Signed in, but your session could not be saved. Please check that cookies are enabled and try again.",
   "loginErrorEmailNotConfirmed": "Tarkista sähköpostisi vahvistaaksesi tilisi",
   "loginErrorTooManyRequests": "Liian monta kirjautumisyritystä. Odota muutama minuutti.",
   "loginErrorFailed": "Kirjautuminen epäonnistui. Yritä uudelleen.",

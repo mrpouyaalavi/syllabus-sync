@@ -43,6 +43,68 @@ function isRefreshTokenMissingError(error: { message?: string; code?: string | n
   );
 }
 
+/** Matches the deadline the proxy previously used for this same check. */
+const MFA_AAL_DEADLINE_MS = process.env.NODE_ENV === 'development' ? 4000 : 2500;
+
+type MfaGateResult = { ok: true } | { ok: false; response: NextResponse };
+
+/**
+ * Assurance-level (MFA) gate for authenticated API routes.
+ *
+ * This check used to live in the root proxy/middleware, which was the *only*
+ * place enforcing MFA for API requests. It moved here when API routes were
+ * excluded from middleware auth resolution (see lib/proxy.ts): the middleware
+ * was creating a fresh Supabase client and calling getUser() on every parallel
+ * API request, and since Supabase rotates the refresh token on each use, a page
+ * load firing many API calls at once produced a burst of competing refreshes —
+ * observed in production as ~100 refresh_token grants in a 5s window, 99 of
+ * them rate-limited (429).
+ *
+ * Semantics are preserved exactly as the proxy had them:
+ *   - resolved + nextLevel 'aal2' while currentLevel is 'aal1' -> 403 MFA_REQUIRED
+ *   - unresolved (timeout/throw)                               -> 503 AUTH_UNAVAILABLE
+ * The unresolved case is deliberately fail-closed: if we cannot confirm the
+ * assurance level we deny rather than risk letting an aal1 session through.
+ *
+ * Callers pass their existing client so this adds no extra client construction.
+ */
+async function enforceMfaAssuranceLevel(
+  supabase: Awaited<ReturnType<typeof createServerClient>>,
+): Promise<MfaGateResult> {
+  let requiresMfaUpgrade = false;
+  let resolution: 'resolved' | 'unknown' = 'unknown';
+
+  try {
+    const aalPromise = supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+    const timeoutPromise = new Promise<null>((resolve) =>
+      setTimeout(() => resolve(null), MFA_AAL_DEADLINE_MS),
+    );
+
+    const result = await Promise.race([aalPromise, timeoutPromise]);
+
+    if (result && 'data' in result) {
+      resolution = 'resolved';
+      const aal = result.data;
+      requiresMfaUpgrade = aal?.nextLevel === 'aal2' && aal?.currentLevel === 'aal1';
+    }
+  } catch (err) {
+    logger.warn('API MFA AAL check failed; MFA status unknown', { err });
+  }
+
+  if (resolution === 'unknown') {
+    return {
+      ok: false,
+      response: jsonError('Auth temporarily unavailable', 503, ERROR_CODES.SERVICE_UNAVAILABLE),
+    };
+  }
+
+  if (requiresMfaUpgrade) {
+    return { ok: false, response: jsonError('MFA required', 403, ERROR_CODES.FORBIDDEN) };
+  }
+
+  return { ok: true };
+}
+
 /**
  * Require authentication for API routes
  * SECURITY: For mutation methods, also validates CSRF origin header
@@ -82,6 +144,12 @@ export const requireAuth = async (
       }
       return jsonUnauthorized('Valid authentication token required');
     }
+
+    // Assurance-level gate — previously enforced by the root proxy, which no
+    // longer resolves auth for API routes. Reuses the client above, so this
+    // costs no extra client construction.
+    const mfaGate = await enforceMfaAssuranceLevel(supabase);
+    if (!mfaGate.ok) return mfaGate.response;
 
     return await handler(user.id);
   } catch (error) {
@@ -196,6 +264,12 @@ export const requireAuthWithRateLimit = async (
       }
       return jsonUnauthorized('Valid authentication token required');
     }
+
+    // Assurance-level gate — previously enforced by the root proxy, which no
+    // longer resolves auth for API routes. Runs before rate limiting so an
+    // MFA-required caller cannot consume another user's rate-limit budget.
+    const mfaGate = await enforceMfaAssuranceLevel(supabase);
+    if (!mfaGate.ok) return mfaGate.response;
 
     // Apply rate limiting using user ID for authenticated requests
     const key = rateLimitKey || new URL(request.url).pathname;

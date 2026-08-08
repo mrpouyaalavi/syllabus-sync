@@ -1571,6 +1571,7 @@
   "clearConfirm": "ЯСНО",
   "loginErrorMissingFields": "Введіть адресу електронної пошти та пароль",
   "loginErrorInvalidCredentials": "Неправильна адреса електронної пошти або пароль",
+  "loginErrorSessionNotPersisted": "Signed in, but your session could not be saved. Please check that cookies are enabled and try again.",
   "loginErrorEmailNotConfirmed": "Перевірте свою електронну пошту, щоб підтвердити обліковий запис",
   "loginErrorTooManyRequests": "Забагато спроб входу. Зачекайте кілька хвилин.",
   "loginErrorFailed": "Помилка входу. Спробуйте ще раз.",

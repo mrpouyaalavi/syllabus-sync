@@ -39,18 +39,6 @@ function isRefreshTokenMissingError(error: { message?: string; code?: string | n
   );
 }
 
-function isPublicApiPath(path: string): boolean {
-  return (
-    path.startsWith('/api/auth/') ||
-    path.startsWith('/api/health') ||
-    path.startsWith('/api/maps/') ||
-    path.startsWith('/api/weather') ||
-    path.startsWith('/api/cron/') ||
-    path.startsWith('/api/security/rate-limit/cleanup') ||
-    path.startsWith('/api/csp-report') ||
-    path.startsWith('/api/webauthn/authenticate/')
-  );
-}
 
 /**
  * Next.js 16 Proxy — security headers, session refresh, and route protection.
@@ -94,17 +82,37 @@ export async function proxy(request: NextRequest) {
   const isAuthRoute = authRoutes.some((route) => path.startsWith(route));
   const isRootPath = path === '/';
   const isApiRoute = path.startsWith('/api/');
-  const isPublicApi = isPublicApiPath(path);
   const isResetPasswordRoute = path.startsWith('/reset-password');
   const isAuthCallbackRoute = path.startsWith('/auth/callback');
   const isAuthConfirmRoute = path.startsWith('/auth/confirm');
 
+  // API routes deliberately do NOT resolve auth here.
+  //
+  // This middleware builds a fresh Supabase server client per request (there is
+  // no cross-request client or lock, and adding a shared one would be unsafe —
+  // it would leak sessions between users). Supabase rotates the refresh token
+  // on every use, so when a page load fires many API calls in parallel, each
+  // one independently presented the *same* refresh token here: one won, the
+  // rest got 429/400. Production Supabase auth logs showed ~100 refresh_token
+  // grants inside a 5-second window, 99 rate-limited — which then made
+  // getUser() return no user and bounced authenticated users back to /login.
+  //
+  // Every non-public API already enforces its own auth inside the route handler
+  // (requireAuth / requireAuthWithRateLimit / inline getUser), so the auth check
+  // middleware performed here was defence-in-depth, not the only gate — audited
+  // across all 65 routes before this change. The one thing that lived *only*
+  // here was the MFA assurance-level gate; it moved into the shared route-level
+  // helper (app/api/_lib/middleware.ts) with identical semantics.
+  //
+  // Page routes still resolve auth here: they need the redirect behaviour, and
+  // a navigation is a single request rather than a parallel burst.
   const shouldResolveUser =
     !isRootPath &&
     !isResetPasswordRoute &&
     !isAuthCallbackRoute &&
     !isAuthConfirmRoute &&
-    (isProtectedRoute || isAuthRoute || (isApiRoute && !isPublicApi));
+    !isApiRoute &&
+    (isProtectedRoute || isAuthRoute);
 
   if (path === '/@vite/client') {
     return new NextResponse('', {
@@ -318,9 +326,10 @@ export async function proxy(request: NextRequest) {
     }
   }
 
+  // Page routes only — the API arm of this condition moved to
+  // enforceMfaAssuranceLevel() in app/api/_lib/middleware.ts.
   let requiresMfaUpgrade = false;
-  let mfaResolution: 'resolved' | 'unknown' = 'unknown';
-  if (user && (isProtectedRoute || isAuthRoute || (isApiRoute && !isPublicApi))) {
+  if (user && (isProtectedRoute || isAuthRoute)) {
     const MFA_AAL_DEADLINE_MS = process.env.NODE_ENV === 'development' ? 4000 : 2500;
     try {
       const aalPromise = supabase.auth.mfa.getAuthenticatorAssuranceLevel();
@@ -331,10 +340,13 @@ export async function proxy(request: NextRequest) {
       const result = await Promise.race([aalPromise, timeoutPromise]);
 
       if (result && 'data' in result) {
-        mfaResolution = 'resolved';
         const aal = result.data;
         requiresMfaUpgrade = aal?.nextLevel === 'aal2' && aal?.currentLevel === 'aal1';
       }
+      // An unresolved result leaves requiresMfaUpgrade false, so a page render
+      // proceeds. That matches the pre-existing page behaviour: only the API
+      // path ever failed closed on an unknown assurance level, and that rule is
+      // preserved in enforceMfaAssuranceLevel().
     } catch (err) {
       logger.warn('Proxy MFA AAL check failed; MFA status unknown', {
         path,
@@ -375,41 +387,14 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(redirectUrl);
   }
 
-  if (isApiRoute && !isPublicApi && user && mfaResolution === 'unknown') {
-    const unavailableResponse = NextResponse.json(
-      { error: 'Auth temporarily unavailable', code: 'AUTH_UNAVAILABLE' },
-      { status: 503 },
-    );
-    setSecurityHeaders(unavailableResponse.headers);
-    return unavailableResponse;
-  }
-
-  if (isApiRoute && !isPublicApi && user && requiresMfaUpgrade) {
-    const forbiddenResponse = NextResponse.json(
-      { error: 'MFA required', code: 'MFA_REQUIRED' },
-      { status: 403 },
-    );
-    setSecurityHeaders(forbiddenResponse.headers);
-    return forbiddenResponse;
-  }
-
-  if (isApiRoute && !isPublicApi && !user && authResolution === 'unknown') {
-    const unavailableResponse = NextResponse.json(
-      { error: 'Auth temporarily unavailable', code: 'AUTH_UNAVAILABLE' },
-      { status: 503 },
-    );
-    setSecurityHeaders(unavailableResponse.headers);
-    return unavailableResponse;
-  }
-
-  if (isApiRoute && !isPublicApi && !user) {
-    const unauthorizedResponse = NextResponse.json(
-      { error: 'Unauthorized', code: 'UNAUTHORIZED' },
-      { status: 401 },
-    );
-    setSecurityHeaders(unauthorizedResponse.headers);
-    return unauthorizedResponse;
-  }
-
+  // NOTE: the API auth/MFA response blocks that used to live here (401
+  // Unauthorized, 403 MFA_REQUIRED, 503 AUTH_UNAVAILABLE) have been removed.
+  // `shouldResolveUser` now excludes API routes, so `user` is always null for
+  // them and those branches were unreachable — leaving them would have made
+  // every authenticated API call 401 at the edge. Their behaviour is preserved
+  // at the route level:
+  //   - 401  -> requireAuth / requireAuthWithRateLimit / inline getUser()
+  //   - 403 MFA_REQUIRED and 503 AUTH_UNAVAILABLE -> enforceMfaAssuranceLevel()
+  //     in app/api/_lib/middleware.ts, same thresholds, same fail-closed rule.
   return response;
 }

@@ -1614,6 +1614,7 @@
   "clearConfirm": "JELAS",
   "loginErrorMissingFields": "Sila masukkan e-mel dan kata laluan",
   "loginErrorInvalidCredentials": "E-mel atau kata laluan tidak sah",
+  "loginErrorSessionNotPersisted": "Signed in, but your session could not be saved. Please check that cookies are enabled and try again.",
   "loginErrorEmailNotConfirmed": "Sila semak e-mel anda untuk mengesahkan akaun anda",
   "loginErrorTooManyRequests": "Terlalu banyak percubaan log masuk. Sila tunggu beberapa minit.",
   "loginErrorFailed": "Log masuk gagal. Sila cuba lagi.",

@@ -1614,6 +1614,7 @@
   "clearConfirm": "தெளிவு",
   "loginErrorMissingFields": "மின்னஞ்சல் மற்றும் கடவுச்சொல்லை உள்ளிடவும்",
   "loginErrorInvalidCredentials": "தவறான மின்னஞ்சல் அல்லது கடவுச்சொல்",
+  "loginErrorSessionNotPersisted": "Signed in, but your session could not be saved. Please check that cookies are enabled and try again.",
   "loginErrorEmailNotConfirmed": "உங்கள் கணக்கை உறுதிப்படுத்த உங்கள் மின்னஞ்சலைச் சரிபார்க்கவும்",
   "loginErrorTooManyRequests": "பல உள்நுழைவு முயற்சிகள். தயவுசெய்து சில நிமிடங்கள் காத்திருக்கவும்.",
   "loginErrorFailed": "உள்நுழைவு தோல்வியடைந்தது. மீண்டும் முயற்சிக்கவும்.",

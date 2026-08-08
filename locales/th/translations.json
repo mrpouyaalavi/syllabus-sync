@@ -1614,6 +1614,7 @@
   "clearConfirm": "ชัดเจน",
   "loginErrorMissingFields": "กรุณากรอกอีเมล์และรหัสผ่าน",
   "loginErrorInvalidCredentials": "อีเมลหรือรหัสผ่านไม่ถูกต้อง",
+  "loginErrorSessionNotPersisted": "Signed in, but your session could not be saved. Please check that cookies are enabled and try again.",
   "loginErrorEmailNotConfirmed": "โปรดตรวจสอบอีเมลของคุณเพื่อยืนยันบัญชีของคุณ",
   "loginErrorTooManyRequests": "พยายามเข้าสู่ระบบหลายครั้งเกินไป กรุณารอสักครู่.",
   "loginErrorFailed": "การเข้าสู่ระบบล้มเหลว โปรดลองอีกครั้ง",

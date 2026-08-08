@@ -1614,6 +1614,7 @@
   "clearConfirm": "清除",
   "loginErrorMissingFields": "请输入电子邮件和密码",
   "loginErrorInvalidCredentials": "电子邮件或密码无效",
+  "loginErrorSessionNotPersisted": "Signed in, but your session could not be saved. Please check that cookies are enabled and try again.",
   "loginErrorEmailNotConfirmed": "请检查您的电子邮件以确认您的帐户",
   "loginErrorTooManyRequests": "登录尝试次数过多。请稍等几分钟。",
   "loginErrorFailed": "登录失败。请再试一次。",

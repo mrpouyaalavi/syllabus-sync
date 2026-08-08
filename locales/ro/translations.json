@@ -1614,6 +1614,7 @@
   "clearConfirm": "CLEAR",
   "loginErrorMissingFields": "Vă rugăm să introduceți adresa de e-mail și parola",
   "loginErrorInvalidCredentials": "E-mail sau parolă nevalidă",
+  "loginErrorSessionNotPersisted": "Signed in, but your session could not be saved. Please check that cookies are enabled and try again.",
   "loginErrorEmailNotConfirmed": "Vă rugăm să vă verificați e-mailul pentru a vă confirma contul",
   "loginErrorTooManyRequests": "Prea multe încercări de conectare. Vă rugăm să așteptați câteva minute.",
   "loginErrorFailed": "Conectarea a eșuat. Vă rugăm să încercați din nou.",

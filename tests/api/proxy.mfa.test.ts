@@ -73,32 +73,50 @@ describe('proxy mfa enforcement', () => {
     expect(res.headers.get('location')).toContain('/home');
   });
 
-  it('returns 403 for non-public API routes when aal2 upgrade is required', async () => {
+  // API routes are deliberately passed through without middleware auth
+  // resolution. Building a fresh Supabase client per request meant parallel API
+  // calls each raced to use the same rotating refresh token, producing the
+  // production refresh storm (~100 grants / 5s, 99 rate-limited). Enforcement
+  // for these routes now lives in app/api/_lib/middleware.ts — see
+  // tests/api/api-auth-mfa.test.ts for the 401/403/503 coverage that moved
+  // there. The middleware's job here is simply not to touch auth at all.
+  it('does not resolve Supabase auth for non-public API routes', async () => {
     const { proxy } = await import('@/lib/proxy');
 
-    const req = new NextRequest('http://localhost/api/user/export');
+    const req = new NextRequest('http://localhost/api/events');
     const res = await proxy(req);
-    const json = await res.json();
 
-    expect(res.status).toBe(403);
-    expect(json.code).toBe('MFA_REQUIRED');
+    // No getUser() => no refresh => cannot contribute to a refresh storm.
+    expect(supabaseMocks.getUserMock).not.toHaveBeenCalled();
+    expect(supabaseMocks.getAalMock).not.toHaveBeenCalled();
+    // Passed through for the route handler to authenticate itself.
+    expect(res.status).toBe(200);
   });
 
-  it('returns 503 for non-public API routes when auth status is unknown', async () => {
-    vi.useFakeTimers();
-    supabaseMocks.getUserMock.mockImplementationOnce(() => new Promise(() => {}) as any);
-
+  it('does not resolve auth for many parallel API requests (refresh-storm regression)', async () => {
     const { proxy } = await import('@/lib/proxy');
 
-    const req = new NextRequest('http://localhost/api/user/export');
-    const pending = proxy(req);
-    await vi.advanceTimersByTimeAsync(6000);
-    const res = await pending;
-    const json = await res.json();
+    const paths = [
+      '/api/events',
+      '/api/deadlines',
+      '/api/todos',
+      '/api/units',
+      '/api/notifications',
+      '/api/profiles',
+      '/api/user-preferences',
+      '/api/gamification',
+    ];
 
-    expect(res.status).toBe(503);
-    expect(json.code).toBe('AUTH_UNAVAILABLE');
-    vi.useRealTimers();
+    // Simulate the burst a page load produces.
+    const responses = await Promise.all(
+      paths.map((p) => proxy(new NextRequest(`http://localhost${p}`))),
+    );
+
+    expect(responses).toHaveLength(paths.length);
+    // The whole point: N parallel API requests => 0 middleware auth
+    // resolutions, so N competing refresh_token exchanges become 0.
+    expect(supabaseMocks.getUserMock).toHaveBeenCalledTimes(0);
+    expect(supabaseMocks.getAalMock).toHaveBeenCalledTimes(0);
   });
 
   it('allows /api/webauthn/authenticate/* through without auth (pre-login passkey flow)', async () => {
@@ -126,7 +144,7 @@ describe('proxy mfa enforcement', () => {
     expect(verifyRes.status).not.toBe(403);
   });
 
-  it('blocks /api/webauthn/register/* without auth (requires session)', async () => {
+  it('passes /api/webauthn/register/* through to its own route-level auth', async () => {
     supabaseMocks.getUserMock.mockResolvedValueOnce({
       data: { user: null },
       error: null,
@@ -138,7 +156,13 @@ describe('proxy mfa enforcement', () => {
       method: 'POST',
     });
     const res = await proxy(req);
-    expect(res.status).toBe(401);
+
+    // Previously the middleware returned 401 here. It no longer resolves auth
+    // for API routes, so the request passes through — the route handler's own
+    // inline getUser() check is what rejects an unauthenticated caller. That
+    // route-level rejection is covered in tests/api/api-auth-mfa.test.ts.
+    expect(supabaseMocks.getUserMock).not.toHaveBeenCalled();
+    expect(res.status).toBe(200);
   });
 
   it('does not force local signout for non-refresh 400 auth errors', async () => {

@@ -1614,6 +1614,7 @@
   "clearConfirm": "クリア",
   "loginErrorMissingFields": "メールアドレスとパスワードを入力してください",
   "loginErrorInvalidCredentials": "無効な電子メールまたはパスワード",
+  "loginErrorSessionNotPersisted": "Signed in, but your session could not be saved. Please check that cookies are enabled and try again.",
   "loginErrorEmailNotConfirmed": "メールをチェックしてアカウントを確認してください",
   "loginErrorTooManyRequests": "ログイン試行が多すぎます。数分お待ちください。",
   "loginErrorFailed": "ログインに失敗しました。もう一度試してください。",

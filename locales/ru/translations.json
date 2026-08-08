@@ -1614,6 +1614,7 @@
   "clearConfirm": "ПРОЗРАЧНЫЙ",
   "loginErrorMissingFields": "Пожалуйста, введите адрес электронной почты и пароль",
   "loginErrorInvalidCredentials": "Неверный адрес электронной почты или пароль",
+  "loginErrorSessionNotPersisted": "Signed in, but your session could not be saved. Please check that cookies are enabled and try again.",
   "loginErrorEmailNotConfirmed": "Пожалуйста, проверьте свою электронную почту, чтобы подтвердить свою учетную запись",
   "loginErrorTooManyRequests": "Слишком много попыток входа. Пожалуйста, подождите несколько минут.",
   "loginErrorFailed": "Ошибка входа. Пожалуйста, попробуйте еще раз.",

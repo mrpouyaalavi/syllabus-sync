@@ -1614,6 +1614,7 @@
   "clearConfirm": "נקה",
   "loginErrorMissingFields": "נא להזין מייל וסיסמה",
   "loginErrorInvalidCredentials": "אימייל או סיסמה לא חוקיים",
+  "loginErrorSessionNotPersisted": "Signed in, but your session could not be saved. Please check that cookies are enabled and try again.",
   "loginErrorEmailNotConfirmed": "אנא בדוק את האימייל שלך כדי לאשר את חשבונך",
   "loginErrorTooManyRequests": "יותר מדי ניסיונות כניסה. אנא המתן מספר דקות.",
   "loginErrorFailed": "הכניסה נכשלה. אנא נסה שוב.",
