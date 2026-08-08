@@ -159,4 +159,38 @@ describe('proxy mfa enforcement', () => {
     expect(supabaseMocks.signOutMock).not.toHaveBeenCalled();
     expect(res.headers.get('location')).toContain('/login');
   });
+
+  // Regression test for a production incident: this middleware creates a new
+  // Supabase client per request with no lock shared across concurrent
+  // requests. When several requests race to refresh the same cookie-stored
+  // refresh token (e.g. the parallel API calls a page fires on mount right
+  // after login), the loser sees "refresh token not found" even though a
+  // sibling request already established a valid session. Previously the
+  // middleware called signOut({scope:'local'}) here, clearing the session
+  // cookie on this response and — if this was the response to the actual
+  // page navigation — destroying the session the user just logged into,
+  // bouncing them back to /login immediately after "Welcome back". Confirmed
+  // against production Supabase auth logs: a burst of concurrent
+  // refresh_token grants, mostly rate-limited, with one landing here.
+  it('does not force local signout for refresh-token errors (concurrent-refresh race safety)', async () => {
+    supabaseMocks.getUserMock.mockResolvedValueOnce({
+      data: { user: null },
+      error: {
+        message: 'Invalid Refresh Token: Refresh Token Not Found',
+        status: 400,
+        code: 'refresh_token_not_found',
+      },
+    });
+
+    const { proxy } = await import('@/lib/proxy');
+
+    const req = new NextRequest('http://localhost/home');
+    const res = await proxy(req);
+
+    expect(supabaseMocks.signOutMock).not.toHaveBeenCalled();
+    // Still redirected — this request genuinely has no confirmed user — but
+    // via the normal "resolved, no user" path, not a middleware-forced
+    // sign-out that would clear a possibly-still-valid session cookie.
+    expect(res.headers.get('location')).toContain('/login');
+  });
 });

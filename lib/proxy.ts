@@ -256,10 +256,35 @@ export async function proxy(request: NextRequest) {
             console.warn('Proxy auth status:', error.message);
           }
         } else {
-          try {
-            await supabase.auth.signOut({ scope: 'local' });
-          } catch {
-            // Ignore signout errors during refresh failure
+          // Do NOT call signOut() here. This middleware creates a brand-new
+          // Supabase client on every single request with no lock shared
+          // across concurrent requests (e.g. the several API calls a page
+          // fires on mount). Supabase rotates the refresh token on each use,
+          // so when two requests race to refresh the SAME cookie-stored
+          // token, the loser sees exactly this "refresh token not
+          // found/invalid" error — even though a sibling request already
+          // established a valid new session moments earlier.
+          //
+          // signOut({scope:'local'}) here would clear the session cookie on
+          // THIS response, which — if this happens to be the response to the
+          // actual page navigation — destroys the session the user just
+          // successfully established, immediately bouncing them back to
+          // /login right after "Welcome back". Confirmed against production
+          // Supabase auth logs: a burst of concurrent refresh_token grants,
+          // mostly rate-limited (429), with one landing exactly here as an
+          // "invalid refresh token" error.
+          //
+          // Treat it like any other unresolved case instead: this request
+          // proceeds with user=null. If the token is genuinely dead (not a
+          // race), every subsequent request's getUser() will keep failing
+          // too, and the existing "resolved, no user -> redirect to /login"
+          // logic below already handles that correctly, without this
+          // middleware needing to proactively destroy a cookie that might
+          // still be valid.
+          if (shouldLogTransientProxyAuthError()) {
+            console.warn(
+              'Proxy auth status: refresh token rejected (possibly a concurrent-refresh race); request continuing without forcing sign-out',
+            );
           }
         }
       }
