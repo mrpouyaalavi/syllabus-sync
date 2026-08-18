@@ -21,7 +21,7 @@
 
 <br/>
 
-# Syllabus Sync — Student Planning Platform
+# Syllabus Sync - Student Planning Platform
 
 > **A full-stack student planning platform that brings unit management, assessment deadlines, study organisation, and basic campus support into one interface.**
 
