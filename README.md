@@ -156,7 +156,7 @@ Released under the **MIT License**.
 - **Syllabus extraction pipeline:** Parsing syllabus PDFs into structured deadlines (OCR/LLM) — planned, no code exists yet.
 - **Email reminder delivery:** Settings toggles exist and persist, but no cron job dispatches reminder emails yet (push and in-app notifications are fully wired).
 - **Gamification UI:** A `mv_xp_leaderboard` materialized view exists in the database, but there is no leaderboard or achievements UI surfaced to users yet.
-- **MQ Navigation integration:** [MQ Navigation](https://github.com/mrpouyaalavi/MQ_Navigation) is a separate, unpublished mobile wayfinding prototype. Syllabus Sync links out to its repo — there's no in-app deep link or advanced routing integration.
+- **MQ Navigation integration:** [MQ Navigation](https://github.com/leoalavi/MQ_Navigation) is a separate, unpublished mobile wayfinding prototype. Syllabus Sync links out to its repo — there's no in-app deep link or advanced routing integration.
 - Reference dataset support for additional universities (USYD, UNSW).
 - Federated identity via institution SSO (SAML/OIDC) — aspirational, not scheduled.
 
@@ -164,7 +164,7 @@ Released under the **MIT License**.
 
 | Name               | Role                                           |
 | ------------------ | ---------------------------------------------- |
-| Pouya Alavi Naeini | Lead maintainer — architecture, infrastructure |
+| Leo Alavi        | Lead maintainer — architecture, infrastructure |
 | Raouf Abedini      | Co-maintainer — security, backend              |
 
 <br/>
@@ -212,7 +212,7 @@ tools/              Repo utilities (i18n checks, secret scanning, exports)
 
 ```bash
 # Clone and install
-git clone https://github.com/mrpouyaalavi/syllabus-sync.git
+git clone https://github.com/leoalavi/syllabus-sync.git
 cd syllabus-sync
 npm install
 
@@ -307,14 +307,14 @@ Full setup notes: [Environment Setup](./docs/operations/ENVIRONMENT_SETUP.md).
 ### `> ping --authors`
 
 ```text
-> Authors    : Pouya Alavi Naeini — Software Engineer | Mohammad Raouf Abedini — Back-End Developer
+> Authors    : Leo Alavi — Software Engineer | Mohammad Raouf Abedini — Back-End Developer
 > University : Macquarie University, Sydney, NSW
 > Status     : [●] ONLINE — open to grad & junior opportunities
 ```
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-6366f1?style=for-the-badge&logo=linkedin&logoColor=ffffff&labelColor=0f172a)](https://www.linkedin.com/in/pouya-alavi/)
-[![GitHub](https://img.shields.io/badge/GitHub-Follow-22c55e?style=for-the-badge&logo=github&logoColor=ffffff&labelColor=0f172a)](https://github.com/mrpouyaalavi)
-[![Email](https://img.shields.io/badge/Email-Contact-f59e0b?style=for-the-badge&logo=gmail&logoColor=09090b&labelColor=0f172a)](mailto:pouya@pouyaalavi.dev)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-6366f1?style=for-the-badge&logo=linkedin&logoColor=ffffff&labelColor=0f172a)](https://www.linkedin.com/in/leo-alavi/)
+[![GitHub](https://img.shields.io/badge/GitHub-Follow-22c55e?style=for-the-badge&logo=github&logoColor=ffffff&labelColor=0f172a)](https://github.com/leoalavi)
+[![Email](https://img.shields.io/badge/Email-Contact-f59e0b?style=for-the-badge&logo=gmail&logoColor=09090b&labelColor=0f172a)](mailto:leo@leoalavi.dev)
 
 <br/>
 
